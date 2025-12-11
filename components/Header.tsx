@@ -52,14 +52,18 @@ const BrainLogo = ({ size = 48, className = "" }: { size?: number, className?: s
 
 const Header: React.FC = () => {
   return (
-    <header className="w-full py-6 px-4 flex items-center justify-center bg-transparent relative z-10">
-      <div className="flex items-center gap-4">
+    <header className="w-full py-8 px-4 flex items-center justify-center bg-transparent relative z-10">
+      <div className="flex items-center gap-5">
         {/* Logo with no container */}
-        <BrainLogo size={72} className="drop-shadow-sm" />
+        <BrainLogo size={84} className="drop-shadow-sm" />
         
-        <div>
-          <h1 className="text-xl font-semibold text-stone-800 tracking-tight">Neuro-Interpreter</h1>
-          <p className="text-xs text-stone-600 font-medium">Magical Context Decoder</p>
+        <div className="flex flex-col">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-stone-900 tracking-tight leading-tight">
+            Neuro-Interpreter
+          </h1>
+          <p className="text-sm md:text-base text-stone-600 font-semibold tracking-wide mt-1">
+            Magical Context Decoder
+          </p>
         </div>
       </div>
     </header>

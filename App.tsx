@@ -5,13 +5,14 @@ import AnalysisDashboard from './components/AnalysisDashboard';
 import PanicButton from './components/PanicButton';
 import { AnalysisResult } from './types';
 import { analyzeMessageContext } from './services/geminiService';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Chrome, Download, X } from 'lucide-react';
 import { KeyIllustration } from './components/Illustrations';
 
 const App: React.FC = () => {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showExtensionModal, setShowExtensionModal] = useState(false);
 
   const handleAnalyze = async (text: string, useDeepContext: boolean, imageBase64?: string, mimeType?: string) => {
     setIsAnalyzing(true);
@@ -47,11 +48,29 @@ const App: React.FC = () => {
             
             {/* Left Column: The "Messy Mind" Input */}
             <div className="p-8 md:p-12 flex flex-col relative">
-               <div className="mb-8">
+               <div className="mb-6">
                  <h2 className="text-3xl font-bold text-stone-800 mb-2">The Source</h2>
-                 <p className="text-stone-600 leading-relaxed">
+                 <p className="text-stone-600 leading-relaxed mb-4">
                    Paste the confusing text or upload a screenshot. Let's make sense of this together.
                  </p>
+
+                 {/* Chrome Extension Promo */}
+                 <button 
+                    onClick={() => setShowExtensionModal(true)}
+                    className="w-full text-left bg-gradient-to-r from-stone-100 to-emerald-50/50 border border-stone-200 p-4 rounded-xl flex items-center gap-4 shadow-sm group cursor-pointer hover:border-forest/30 transition-all outline-none focus:ring-2 focus:ring-forest/20"
+                 >
+                    <div className="bg-white p-3 rounded-full shadow-sm group-hover:scale-110 transition-transform flex-shrink-0">
+                      <Chrome className="text-forest" size={24} />
+                    </div>
+                    <div className="flex-grow">
+                      <h3 className="font-bold text-stone-800 text-sm flex items-center gap-2">
+                        Get the Chrome Extension
+                        <span className="bg-forest/10 text-forest text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide">New</span>
+                      </h3>
+                      <p className="text-xs text-stone-500 mt-0.5">Decode WhatsApp & Messenger automatically in your browser.</p>
+                    </div>
+                    <Download size={18} className="text-stone-400 group-hover:text-forest transition-colors" />
+                 </button>
                </div>
                
                <div className="flex-grow">
@@ -112,6 +131,65 @@ const App: React.FC = () => {
       </main>
 
       <PanicButton />
+
+      {/* Extension Installation Modal */}
+      {showExtensionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative animate-in zoom-in-95 border border-stone-200">
+             <button 
+               onClick={() => setShowExtensionModal(false)}
+               className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600 rounded-full hover:bg-stone-100 transition-colors"
+               aria-label="Close modal"
+             >
+               <X size={20} />
+             </button>
+             
+             <div className="flex items-center gap-3 mb-5 text-forest">
+               <div className="bg-forest/10 p-2 rounded-lg">
+                 <Chrome size={24} className="text-forest" />
+               </div>
+               <h3 className="text-xl font-bold text-stone-800">Install Neuro-Interpreter</h3>
+             </div>
+             
+             <div className="space-y-4 text-stone-600 text-sm leading-relaxed">
+               <p className="font-medium text-stone-700">Since this is a development preview, you can install the extension manually:</p>
+               
+               <div className="bg-stone-50 p-4 rounded-xl border border-stone-200">
+                 <ol className="list-decimal pl-5 space-y-3">
+                   <li>
+                     <span className="font-semibold text-stone-800">Download the source code</span> from this project.
+                   </li>
+                   <li>
+                     Open Chrome and navigate to <code className="bg-stone-200 px-1.5 py-0.5 rounded text-xs font-mono text-stone-800">chrome://extensions</code>
+                   </li>
+                   <li>
+                     Enable <strong className="text-forest">Developer mode</strong> (toggle in top right).
+                   </li>
+                   <li>
+                     Click the <strong className="text-forest">Load unpacked</strong> button.
+                   </li>
+                   <li>
+                     Select the <code className="bg-stone-200 px-1.5 py-0.5 rounded text-xs font-mono text-stone-800">chrome</code> folder from the project files.
+                   </li>
+                 </ol>
+               </div>
+               
+               <p className="text-xs text-stone-500 italic">
+                 Once loaded, visit WhatsApp Web or Instagram to see the brain icon appear on messages!
+               </p>
+             </div>
+
+             <div className="mt-6 flex justify-end">
+               <button 
+                 onClick={() => setShowExtensionModal(false)}
+                 className="px-6 py-2.5 bg-forest text-white rounded-xl font-semibold hover:bg-[#254040] transition-colors shadow-sm hover:shadow-md"
+               >
+                 Got it, thanks!
+               </button>
+             </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
