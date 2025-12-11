@@ -1,10 +1,12 @@
+
 import React from 'react';
 import { Language } from '../types';
-import { Globe } from 'lucide-react';
+import { Globe, BookHeart } from 'lucide-react';
 
 interface HeaderProps {
   language: Language;
   setLanguage: (lang: Language) => void;
+  onOpenMemories: () => void;
   t: any;
 }
 
@@ -59,7 +61,7 @@ const BrainLogo = ({ size = 48, className = "" }: { size?: number, className?: s
   </svg>
 );
 
-const Header: React.FC<HeaderProps> = ({ language, setLanguage, t }) => {
+const Header: React.FC<HeaderProps> = ({ language, setLanguage, onOpenMemories, t }) => {
   return (
     <header className="w-full py-8 px-4 flex items-center justify-between md:justify-center bg-transparent relative z-10">
       
@@ -77,8 +79,20 @@ const Header: React.FC<HeaderProps> = ({ language, setLanguage, t }) => {
         </div>
       </div>
 
-      {/* Language Selector (Absolute on Desktop, Flex on Mobile) */}
-      <div className="md:absolute md:right-8 md:top-8 flex items-center">
+      {/* Action Buttons (Absolute on Desktop, Flex on Mobile) */}
+      <div className="md:absolute md:right-8 md:top-8 flex items-center gap-3">
+        
+        {/* Memories Button */}
+        <button 
+          onClick={onOpenMemories}
+          className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/60 hover:bg-white border border-stone-200 shadow-sm transition-all text-stone-600 hover:text-stone-800"
+          title={t.viewMemories}
+        >
+          <BookHeart size={18} />
+          <span className="font-bold text-xs hidden sm:block">{t.viewMemories}</span>
+        </button>
+
+        {/* Language Selector */}
         <div className="relative group">
           <button className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/60 hover:bg-white border border-stone-200 shadow-sm transition-all text-stone-600 hover:text-stone-800">
             <Globe size={18} />

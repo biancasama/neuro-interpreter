@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { AnalysisResult, RiskLevel } from '../types';
-import { Check, Copy, AlertTriangle, ShieldCheck, Zap, MessageSquare, BookOpen, Heart, Activity, Mic } from 'lucide-react';
+import { Check, Copy, AlertTriangle, ShieldCheck, Zap, MessageSquare, BookOpen, Heart, Activity, Mic, Bookmark } from 'lucide-react';
 
 interface Props {
   result: AnalysisResult | null;
+  onSave: () => void;
   t: any;
 }
 
@@ -50,8 +52,16 @@ const VibeCheckGauge: React.FC<{ level: RiskLevel, t: any }> = ({ level, t }) =>
   );
 };
 
-const AnalysisDashboard: React.FC<Props> = ({ result, t }) => {
+const AnalysisDashboard: React.FC<Props> = ({ result, onSave, t }) => {
+  const [isSaved, setIsSaved] = useState(false);
+
   if (!result) return null;
+
+  const handleSaveClick = () => {
+    onSave();
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 2000);
+  };
 
   const getRiskColors = (level: RiskLevel) => {
     switch (level) {
@@ -145,6 +155,24 @@ const AnalysisDashboard: React.FC<Props> = ({ result, t }) => {
           ))}
         </div>
       </section>
+
+      {/* Save Action */}
+      <div className="flex justify-center pt-4 border-t border-stone-200">
+        <button
+          onClick={handleSaveClick}
+          disabled={isSaved}
+          className={`
+            flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-sm
+            ${isSaved 
+              ? 'bg-emerald-100 text-emerald-700' 
+              : 'bg-white border border-stone-300 text-stone-600 hover:bg-stone-50 hover:text-stone-800'
+            }
+          `}
+        >
+           {isSaved ? <Check size={18} /> : <Bookmark size={18} />}
+           {isSaved ? t.savedToMemory : t.saveToMemory}
+        </button>
+      </div>
 
     </div>
   );

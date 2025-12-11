@@ -1,3 +1,4 @@
+
 import { Language } from '../types';
 
 export const translations: Record<Language, any> = {
@@ -37,7 +38,14 @@ export const translations: Record<Language, any> = {
     stop: "Stop",
     voiceDictation: "Dictate Message",
     removeImage: "Remove Image",
-    removeAudio: "Remove Audio"
+    removeAudio: "Remove Audio",
+    saveToMemory: "Save to Memory",
+    savedToMemory: "Saved!",
+    memoriesTitle: "Long-term Memory",
+    noMemories: "No saved conversations yet.",
+    viewMemories: "Memories",
+    memorySaved: "Memory saved.",
+    delete: "Delete"
   },
   es: {
     subtitle: "Decodificador de Contexto Mágico",
@@ -75,7 +83,14 @@ export const translations: Record<Language, any> = {
     stop: "Parar",
     voiceDictation: "Dictar Mensaje",
     removeImage: "Eliminar Imagen",
-    removeAudio: "Eliminar Audio"
+    removeAudio: "Eliminar Audio",
+    saveToMemory: "Guardar en Memoria",
+    savedToMemory: "¡Guardado!",
+    memoriesTitle: "Memoria a Largo Plazo",
+    noMemories: "Aún no hay conversaciones guardadas.",
+    viewMemories: "Memorias",
+    memorySaved: "Memoria guardada.",
+    delete: "Eliminar"
   },
   fr: {
     subtitle: "Décodeur de Contexte Magique",
@@ -113,7 +128,14 @@ export const translations: Record<Language, any> = {
     stop: "Arrêter",
     voiceDictation: "Dicter le message",
     removeImage: "Supprimer l'image",
-    removeAudio: "Supprimer l'audio"
+    removeAudio: "Supprimer l'audio",
+    saveToMemory: "Enregistrer",
+    savedToMemory: "Enregistré !",
+    memoriesTitle: "Mémoire à Long Terme",
+    noMemories: "Aucune conversation enregistrée.",
+    viewMemories: "Mémoires",
+    memorySaved: "Mémoire enregistrée.",
+    delete: "Supprimer"
   },
   de: {
     subtitle: "Magischer Kontext-Decoder",
@@ -151,7 +173,14 @@ export const translations: Record<Language, any> = {
     stop: "Stopp",
     voiceDictation: "Nachricht diktieren",
     removeImage: "Bild entfernen",
-    removeAudio: "Audio entfernen"
+    removeAudio: "Audio entfernen",
+    saveToMemory: "Speichern",
+    savedToMemory: "Gespeichert!",
+    memoriesTitle: "Langzeitgedächtnis",
+    noMemories: "Noch keine Gespräche gespeichert.",
+    viewMemories: "Erinnerungen",
+    memorySaved: "Gespeichert.",
+    delete: "Löschen"
   },
   it: {
     subtitle: "Decodificatore di Contesto Magico",
@@ -189,7 +218,14 @@ export const translations: Record<Language, any> = {
     stop: "Stop",
     voiceDictation: "Dettare Messaggio",
     removeImage: "Rimuovi Immagine",
-    removeAudio: "Rimuovi Audio"
+    removeAudio: "Rimuovi Audio",
+    saveToMemory: "Salva in Memoria",
+    savedToMemory: "Salvato!",
+    memoriesTitle: "Memoria a Lungo Termine",
+    noMemories: "Nessuna conversazione salvata.",
+    viewMemories: "Ricordi",
+    memorySaved: "Memoria salvata.",
+    delete: "Elimina"
   },
   pt: {
     subtitle: "Decodificador de Contexto Mágico",
@@ -227,7 +263,14 @@ export const translations: Record<Language, any> = {
     stop: "Parar",
     voiceDictation: "Ditar Mensagem",
     removeImage: "Remover Imagem",
-    removeAudio: "Remover Áudio"
+    removeAudio: "Remover Áudio",
+    saveToMemory: "Salvar na Memória",
+    savedToMemory: "Salvo!",
+    memoriesTitle: "Memória de Longo Prazo",
+    noMemories: "Nenhuma conversa salva ainda.",
+    viewMemories: "Memórias",
+    memorySaved: "Memória salva.",
+    delete: "Excluir"
   },
   ja: {
     subtitle: "魔法の文脈デコーダー",
@@ -265,6 +308,13 @@ export const translations: Record<Language, any> = {
     stop: "停止",
     voiceDictation: "メッセージを口述",
     removeImage: "画像を削除",
-    removeAudio: "音声を削除"
+    removeAudio: "音声を削除",
+    saveToMemory: "メモリに保存",
+    savedToMemory: "保存しました！",
+    memoriesTitle: "長期記憶",
+    noMemories: "保存された会話はまだありません。",
+    viewMemories: "思い出",
+    memorySaved: "メモリが保存されました。",
+    delete: "削除"
   }
 };

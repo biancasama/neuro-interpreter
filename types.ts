@@ -1,3 +1,4 @@
+
 export enum RiskLevel {
   SAFE = "Safe",
   CAUTION = "Caution",
@@ -11,6 +12,13 @@ export interface AnalysisResult {
   emotionalSubtext: string;
   vocalTone: string;
   suggestedResponse: string[];
+}
+
+export interface Memory {
+  id: string;
+  timestamp: number;
+  originalText: string;
+  analysis: AnalysisResult;
 }
 
 export type Language = 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'ja';

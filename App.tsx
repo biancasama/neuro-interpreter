@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import InputSection from './components/InputSection';
 import AnalysisDashboard from './components/AnalysisDashboard';
 import PanicButton from './components/PanicButton';
-import { AnalysisResult, Language } from './types';
+import MemoryList from './components/MemoryList';
+import { AnalysisResult, Language, Memory } from './types';
 import { analyzeMessageContext } from './services/geminiService';
 import { AlertCircle, ArrowLeft, Chrome, Download, X } from 'lucide-react';
 import { KeyIllustration } from './components/Illustrations';
@@ -15,9 +17,31 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showExtensionModal, setShowExtensionModal] = useState(false);
   const [language, setLanguage] = useState<Language>('en');
+  
+  // Memory State
+  const [memories, setMemories] = useState<Memory[]>([]);
+  const [showMemories, setShowMemories] = useState(false);
+  const [currentTextSnapshot, setCurrentTextSnapshot] = useState<string>('');
 
   // Helper to get current translations
   const t = translations[language];
+
+  // Load memories from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('neuroSense_memories');
+    if (saved) {
+      try {
+        setMemories(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse memories", e);
+      }
+    }
+  }, []);
+
+  // Save memories to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('neuroSense_memories', JSON.stringify(memories));
+  }, [memories]);
 
   // Helper to map language code to full name for AI prompt
   const getLanguageName = (code: Language) => {
@@ -43,6 +67,9 @@ const App: React.FC = () => {
     setIsAnalyzing(true);
     setError(null);
     setResult(null);
+    // Capture the text context for saving later. 
+    // If no text but audio/image, provide a placeholder description for the memory.
+    setCurrentTextSnapshot(text || (audioBase64 ? "[Audio Message]" : (imageBase64 ? "[Image Analysis]" : "[Content]")));
 
     try {
       const targetLang = getLanguageName(language);
@@ -64,6 +91,22 @@ const App: React.FC = () => {
     }
   };
 
+  const handleSaveMemory = () => {
+    if (!result) return;
+    const newMemory: Memory = {
+      id: Date.now().toString(),
+      timestamp: Date.now(),
+      originalText: currentTextSnapshot,
+      analysis: result
+    };
+    // Add to beginning of list
+    setMemories(prev => [newMemory, ...prev]);
+  };
+
+  const handleDeleteMemory = (id: string) => {
+    setMemories(prev => prev.filter(m => m.id !== id));
+  };
+
   const handleReset = () => {
     setResult(null);
     setError(null);
@@ -71,7 +114,12 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-green-50 to-stone-100 font-sans pb-12 relative text-left flex flex-col">
-      <Header language={language} setLanguage={setLanguage} t={t} />
+      <Header 
+        language={language} 
+        setLanguage={setLanguage} 
+        onOpenMemories={() => setShowMemories(true)}
+        t={t} 
+      />
 
       <main className="flex-grow container mx-auto px-4 md:px-8 py-4 flex flex-col items-center justify-start md:justify-center">
         
@@ -143,7 +191,7 @@ const App: React.FC = () => {
               ) : result ? (
                 <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 h-full">
                    <h2 className="text-3xl font-bold text-stone-800 mb-6 hidden lg:block">{t.clarityTitle}</h2>
-                   <AnalysisDashboard result={result} t={t} />
+                   <AnalysisDashboard result={result} onSave={handleSaveMemory} t={t} />
                 </div>
               ) : (
                 /* Empty State / Magical Anchor */
@@ -224,6 +272,17 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Memories Drawer */}
+      {showMemories && (
+        <MemoryList 
+          memories={memories} 
+          onClose={() => setShowMemories(false)} 
+          onDelete={handleDeleteMemory}
+          t={t}
+        />
+      )}
+
     </div>
   );
 };
