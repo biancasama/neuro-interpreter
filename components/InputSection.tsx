@@ -50,13 +50,15 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing }) =
         
         {/* Header Prompt */}
         <div className="flex items-center gap-2 mb-2 text-sage-700">
-          <FileText size={20} />
-          <h2 className="font-medium">What needs decoding?</h2>
+          <FileText size={20} aria-hidden="true" />
+          <h2 className="font-medium text-lg">What needs decoding?</h2>
         </div>
 
         {/* Text Area */}
+        <label htmlFor="message-input" className="sr-only">Paste your text message</label>
         <textarea
-          className="w-full h-32 p-4 rounded-xl bg-sage-50 text-sage-900 placeholder-sage-400 border border-transparent focus:border-sage-300 focus:ring-0 resize-none text-base transition-colors"
+          id="message-input"
+          className="w-full h-32 p-4 rounded-xl bg-sage-50 text-sage-900 placeholder-sage-400 border border-transparent focus:border-sage-300 focus:ring-2 focus:ring-sage-200 resize-none text-base transition-all outline-none"
           placeholder="Paste the confusing text message here..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -66,11 +68,12 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing }) =
         {/* Image Preview / Drop Zone */}
         {imagePreview ? (
           <div className="relative w-full h-48 bg-cream-100 rounded-xl overflow-hidden border border-cream-200 group">
-            <img src={imagePreview} alt="Upload preview" className="w-full h-full object-cover opacity-90" />
+            <img src={imagePreview} alt="Uploaded chat screenshot" className="w-full h-full object-cover opacity-90" />
             <button
               onClick={removeImage}
-              className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full shadow-sm text-sage-800 hover:text-red-500 transition-colors"
+              className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full shadow-sm text-sage-800 hover:text-red-500 hover:bg-white transition-colors focus:ring-2 focus:ring-red-300 focus:outline-none"
               disabled={isAnalyzing}
+              aria-label="Remove image"
             >
               <X size={18} />
             </button>
@@ -78,10 +81,18 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing }) =
         ) : (
           <div 
             onClick={() => fileInputRef.current?.click()}
-            className="w-full h-24 border-2 border-dashed border-sage-200 rounded-xl flex items-center justify-center cursor-pointer hover:bg-sage-50 transition-colors group"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                fileInputRef.current?.click();
+              }
+            }}
+            tabIndex={0}
+            role="button"
+            aria-label="Upload a screenshot of the chat"
+            className="w-full h-24 border-2 border-dashed border-sage-200 rounded-xl flex items-center justify-center cursor-pointer hover:bg-sage-50 transition-colors group focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-sage-400"
           >
             <div className="flex flex-col items-center gap-1 text-sage-400 group-hover:text-sage-600 transition-colors">
-              <ImageIcon size={24} />
+              <ImageIcon size={24} aria-hidden="true" />
               <span className="text-sm font-medium">Add Screenshot (Optional)</span>
             </div>
           </div>
@@ -93,6 +104,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing }) =
           onChange={handleFileChange}
           accept="image/*"
           className="hidden"
+          aria-hidden="true"
         />
 
         {/* Action Button */}
@@ -101,7 +113,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing }) =
           disabled={(!text && !imageFile) || isAnalyzing}
           className={`
             w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2
-            transition-all duration-200
+            transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-sage-200
             ${(!text && !imageFile) || isAnalyzing 
               ? 'bg-sage-300 cursor-not-allowed' 
               : 'bg-sage-600 hover:bg-sage-700 shadow-lg shadow-sage-200 hover:shadow-sage-300 translate-y-0 hover:-translate-y-0.5'
@@ -110,12 +122,12 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing }) =
         >
           {isAnalyzing ? (
             <>
-              <Loader2 className="animate-spin" size={20} />
+              <Loader2 className="animate-spin" size={20} aria-hidden="true" />
               <span>Decoding...</span>
             </>
           ) : (
             <>
-              <Upload size={20} />
+              <Upload size={20} aria-hidden="true" />
               <span>Analyze Tone & Intent</span>
             </>
           )}

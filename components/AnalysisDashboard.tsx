@@ -85,8 +85,9 @@ const AnalysisDashboard: React.FC<Props> = ({ result }) => {
               {theme.icon}
            </div>
            
-           <h3 className="text-sm uppercase tracking-wider font-bold mb-4 opacity-70 flex items-center gap-2">
-             {theme.icon} Vibe Check
+           {/* COGA Guidance: Avoid All-Caps. Use Sentence Case/Bold for headers. */}
+           <h3 className="text-sm font-bold mb-4 opacity-70 flex items-center gap-2">
+             {theme.icon} Vibe check
            </h3>
            
            <div className="flex flex-col items-center justify-center py-4">
@@ -104,9 +105,9 @@ const AnalysisDashboard: React.FC<Props> = ({ result }) => {
 
         {/* Card 2: Literal Translation */}
         <div className="col-span-1 bg-white rounded-3xl p-6 border border-cream-300 shadow-sm">
-          <h3 className="text-sm text-sage-500 uppercase tracking-wider font-bold mb-4 flex items-center gap-2">
+          <h3 className="text-sm text-sage-500 font-bold mb-4 flex items-center gap-2">
             <MessageCircle size={18} />
-            Literal Translation
+            Literal translation
           </h3>
           <ul className="space-y-3">
             {result.translation.map((point, idx) => (
@@ -123,13 +124,14 @@ const AnalysisDashboard: React.FC<Props> = ({ result }) => {
       {/* Card 3: Reply Coach */}
       <div className="bg-white rounded-3xl p-6 md:p-8 border border-cream-300 shadow-sm">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-sm text-sage-500 uppercase tracking-wider font-bold flex items-center gap-2">
+          <h3 className="text-sm text-sage-500 font-bold flex items-center gap-2">
             <MessageCircle size={18} />
-            Reply Coach
+            Reply coach
           </h3>
           <button 
             onClick={handleAddReply}
-            className="text-xs font-semibold text-sage-600 bg-sage-50 px-3 py-1.5 rounded-lg border border-sage-200 hover:bg-sage-100 hover:border-sage-300 transition-colors flex items-center gap-1.5"
+            className="text-xs font-semibold text-sage-600 bg-sage-50 px-3 py-1.5 rounded-lg border border-sage-200 hover:bg-sage-100 hover:border-sage-300 transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-sage-400 focus:outline-none"
+            aria-label="Add new reply option"
           >
             <Plus size={14} />
             Add Option
@@ -190,32 +192,39 @@ const EditableReplyCard: React.FC<{
     return (
        <div className="flex flex-col h-full bg-white rounded-2xl border-2 border-sage-300 p-4 shadow-md relative animate-in fade-in zoom-in-95 duration-200">
          <div className="mb-3">
+           <label htmlFor={`label-${item.id}`} className="sr-only">Reply Label</label>
+           {/* COGA Guidance: Visible Focus indicators are mandatory. Replaced focus:ring-0 with focus:ring-2. */}
            <input 
+             id={`label-${item.id}`}
              value={label}
              onChange={(e) => setLabel(e.target.value)}
-             className="text-xs font-bold text-sage-700 uppercase tracking-wide bg-sage-50 px-2 py-1 rounded border border-sage-200 w-full focus:outline-none focus:border-sage-400 focus:ring-0"
-             placeholder="LABEL"
+             className="text-xs font-bold text-sage-700 bg-sage-50 px-2 py-1 rounded border border-sage-200 w-full focus:outline-none focus:border-sage-400 focus:ring-2 focus:ring-sage-200"
+             placeholder="Label"
            />
          </div>
+         <label htmlFor={`text-${item.id}`} className="sr-only">Reply Text</label>
          <textarea
+           id={`text-${item.id}`}
            value={text}
            onChange={(e) => setText(e.target.value)}
-           className="w-full flex-grow text-sage-800 text-sm p-3 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:border-sage-400 focus:ring-0 resize-none min-h-[100px]"
+           className="w-full flex-grow text-sage-800 text-sm p-3 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:border-sage-400 focus:ring-2 focus:ring-sage-200 resize-none min-h-[100px]"
            placeholder="Type your reply here..."
            autoFocus
          />
          <div className="flex items-center justify-end gap-2 mt-3">
              <button 
                onClick={handleCancel}
-               className="p-2 text-sage-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-               title="Cancel"
+               className="p-2 text-sage-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors focus:ring-2 focus:ring-red-200 focus:outline-none"
+               title="Cancel editing"
+               aria-label="Cancel editing"
              >
                 <X size={16} />
              </button>
              <button 
                onClick={handleSave} 
-               className="p-2 text-white bg-sage-600 hover:bg-sage-700 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" 
-               title="Save"
+               className="p-2 text-white bg-sage-600 hover:bg-sage-700 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-sage-400 focus:outline-none" 
+               title="Save reply"
+               aria-label="Save reply"
                disabled={!text.trim()}
              >
                 <Save size={16} />
@@ -226,21 +235,24 @@ const EditableReplyCard: React.FC<{
   }
 
   return (
-    <div className="flex flex-col h-full bg-cream-50 rounded-2xl border border-cream-200 p-4 hover:border-sage-300 transition-all group relative">
+    <div className="flex flex-col h-full bg-cream-50 rounded-2xl border border-cream-200 p-4 hover:border-sage-300 transition-all relative group">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-bold text-sage-500 uppercase tracking-wide px-1.5 py-0.5 bg-sage-100/50 rounded">{item.label}</span>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-xs font-bold text-sage-500 px-1.5 py-0.5 bg-sage-100/50 rounded">{item.label}</span>
+        {/* COGA Guidance: Predictability. Removed group-hover opacity dependency. Controls are always visible to reduce cognitive load/anxiety. */}
+        <div className="flex items-center gap-1">
            <button 
             onClick={() => setIsEditing(true)}
-            className="p-1.5 text-sage-400 hover:text-sage-700 hover:bg-sage-100 rounded-md transition-colors"
-            title="Edit"
+            className="p-1.5 text-sage-400 hover:text-sage-700 hover:bg-sage-100 rounded-md transition-colors focus:ring-2 focus:ring-sage-200 focus:outline-none"
+            title="Edit reply"
+            aria-label={`Edit ${item.label} reply`}
           >
             <Pencil size={14} />
           </button>
            <button 
             onClick={() => onDelete(item.id)}
-            className="p-1.5 text-sage-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-            title="Delete"
+            className="p-1.5 text-sage-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors focus:ring-2 focus:ring-red-200 focus:outline-none"
+            title="Delete reply"
+            aria-label={`Delete ${item.label} reply`}
           >
             <Trash2 size={14} />
           </button>
@@ -252,7 +264,8 @@ const EditableReplyCard: React.FC<{
       <div className="mt-4 flex justify-end">
           <button 
           onClick={handleCopy}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${copied ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-white border border-sage-200 text-sage-600 hover:bg-sage-50 hover:border-sage-300 shadow-sm'}`}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 ${copied ? 'bg-emerald-100 text-emerald-700 border border-emerald-200 focus:ring-emerald-300' : 'bg-white border border-sage-200 text-sage-600 hover:bg-sage-50 hover:border-sage-300 shadow-sm focus:ring-sage-300'}`}
+          aria-label={copied ? "Copied" : "Copy to clipboard"}
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
           {copied ? "Copied" : "Copy"}
