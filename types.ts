@@ -9,6 +9,7 @@ export interface AnalysisResult {
   confidenceScore: number;
   literalMeaning: string;
   emotionalSubtext: string;
+  vocalTone: string;
   suggestedResponse: string[];
 }
 

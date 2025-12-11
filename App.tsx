@@ -32,14 +32,29 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAnalyze = async (text: string, useDeepContext: boolean, imageBase64?: string, mimeType?: string) => {
+  const handleAnalyze = async (
+    text: string, 
+    useDeepContext: boolean, 
+    imageBase64?: string, 
+    imageMimeType?: string,
+    audioBase64?: string,
+    audioMimeType?: string
+  ) => {
     setIsAnalyzing(true);
     setError(null);
     setResult(null);
 
     try {
       const targetLang = getLanguageName(language);
-      const data = await analyzeMessageContext(text, useDeepContext, targetLang, imageBase64, mimeType);
+      const data = await analyzeMessageContext(
+        text, 
+        useDeepContext, 
+        targetLang, 
+        imageBase64, 
+        imageMimeType,
+        audioBase64,
+        audioMimeType
+      );
       setResult(data);
     } catch (err: any) {
       setError(t.error);

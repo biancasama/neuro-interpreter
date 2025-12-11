@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon, Loader2, BrainCircuit, Sparkles, Mic, Square, Globe } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Upload, X, Image as ImageIcon, Loader2, BrainCircuit, Sparkles, Mic, Square, Globe, Music } from 'lucide-react';
 import { fileToGenerativePart, transcribeAudio } from '../services/geminiService';
 
 interface InputSectionProps {
-  onAnalyze: (text: string, useDeepContext: boolean, imageBase64?: string, mimeType?: string) => void;
+  onAnalyze: (text: string, useDeepContext: boolean, imageBase64?: string, imageMimeType?: string, audioBase64?: string, audioMimeType?: string) => void;
   isAnalyzing: boolean;
   t: any;
 }
@@ -30,7 +30,19 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
   // Voice Input State
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const [selectedAccent, setSelectedAccent] = useState("Neutral");
+  
+  // Initialize from localStorage or default to Neutral
+  const [selectedAccent, setSelectedAccent] = useState(() => {
+    return localStorage.getItem('neuroSense_voiceAccent') || "Neutral";
+  });
+
+  // Persist selection to localStorage
+  useEffect(() => {
+    localStorage.setItem('neuroSense_voiceAccent', selectedAccent);
+  }, [selectedAccent]);
+
+  const [audioData, setAudioData] = useState<{ base64: string, mimeType: string } | null>(null);
+  
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   
@@ -53,6 +65,10 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
     }
   };
 
+  const removeAudio = () => {
+    setAudioData(null);
+  };
+
   // --- Voice Logic ---
   const startRecording = async () => {
     try {
@@ -71,7 +87,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
 
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-        await handleTranscription(audioBlob, mimeType);
+        await handleAudioInput(audioBlob, mimeType);
         
         // Stop all tracks to release mic
         stream.getTracks().forEach(track => track.stop());
@@ -79,6 +95,8 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
 
       mediaRecorder.start();
       setIsRecording(true);
+      // Clear previous audio when starting new recording
+      setAudioData(null);
     } catch (err) {
       console.error("Error accessing microphone:", err);
       alert("Could not access microphone. Please allow permissions.");
@@ -93,9 +111,17 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
     }
   };
 
-  const handleTranscription = async (audioBlob: Blob, mimeType: string) => {
+  const handleAudioInput = async (audioBlob: Blob, mimeType: string) => {
     try {
       const base64Audio = await fileToGenerativePart(audioBlob);
+      
+      // Save for analysis
+      setAudioData({
+        base64: base64Audio,
+        mimeType: mimeType
+      });
+
+      // Also Transcribe so user sees text
       const transcribedText = await transcribeAudio(base64Audio, mimeType, selectedAccent);
       
       setText(prev => {
@@ -110,17 +136,24 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
   };
 
   const handleSubmit = async () => {
-    if (!text && !imageFile) return;
+    if (!text && !imageFile && !audioData) return;
 
-    let base64 = undefined;
-    let mimeType = undefined;
+    let imgBase64 = undefined;
+    let imgMimeType = undefined;
 
     if (imageFile) {
-      base64 = await fileToGenerativePart(imageFile);
-      mimeType = imageFile.type;
+      imgBase64 = await fileToGenerativePart(imageFile);
+      imgMimeType = imageFile.type;
     }
 
-    onAnalyze(text, useDeepContext, base64, mimeType);
+    onAnalyze(
+      text, 
+      useDeepContext, 
+      imgBase64, 
+      imgMimeType, 
+      audioData?.base64, 
+      audioData?.mimeType
+    );
   };
 
   return (
@@ -194,8 +227,32 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
             />
           </div>
 
-          {/* Image Upload Area */}
-          <div>
+          {/* Attachments Area */}
+          <div className="space-y-2">
+            
+            {/* Audio Attachment Indicator */}
+            {audioData && (
+              <div className="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl animate-in fade-in slide-in-from-bottom-2">
+                 <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                     <Music size={16} />
+                   </div>
+                   <div>
+                     <p className="text-sm font-semibold text-emerald-900">Audio Recorded</p>
+                     <p className="text-xs text-emerald-600">Attached for vocal tone analysis</p>
+                   </div>
+                 </div>
+                 <button 
+                  onClick={removeAudio}
+                  className="p-1.5 text-emerald-400 hover:text-red-500 hover:bg-white rounded-full transition-all"
+                  aria-label="Remove audio"
+                 >
+                   <X size={16} />
+                 </button>
+              </div>
+            )}
+
+            {/* Image Upload Area */}
             {imagePreview ? (
               <div className="relative w-full h-40 bg-stone-100 rounded-xl overflow-hidden border border-stone-300 shadow-sm group">
                 <img src={imagePreview} alt="Uploaded chat screenshot" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
@@ -218,6 +275,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
                 <span>{t.attach}</span>
               </button>
             )}
+            
           </div>
 
           <input
@@ -261,11 +319,11 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
         <div className="mt-8 pt-4">
           <button
             onClick={handleSubmit}
-            disabled={(!text && !imageFile) || isAnalyzing}
+            disabled={(!text && !imageFile && !audioData) || isAnalyzing}
             className={`
               w-full py-4 rounded-2xl font-bold text-white text-lg flex items-center justify-center gap-3
               shadow-lg transition-all duration-300 transform group
-              ${(!text && !imageFile) || isAnalyzing 
+              ${(!text && !imageFile && !audioData) || isAnalyzing 
                 ? 'bg-stone-300 cursor-not-allowed' 
                 : 'bg-forest hover:bg-[#254040] hover:-translate-y-1 hover:shadow-xl'
               }

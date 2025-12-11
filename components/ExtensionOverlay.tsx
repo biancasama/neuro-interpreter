@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { AnalysisResult, RiskLevel } from '../types';
-import { X, Loader2, ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
+import { X, Loader2, ShieldCheck, AlertTriangle, Zap, Mic, Square, Music } from 'lucide-react';
 
 declare var chrome: any;
 
@@ -13,10 +13,25 @@ const ExtensionOverlay: React.FC<Props> = ({ text, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // Audio State
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioAttached, setAudioAttached] = useState(false);
+  
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
-  useEffect(() => {
-    // Send message to background script
-    chrome.runtime.sendMessage({ action: "ANALYZE_TEXT", text }, (response: any) => {
+  const runAnalysis = (txt: string, audioBase64?: string, audioMimeType?: string) => {
+    setLoading(true);
+    setResult(null);
+    setError(null);
+
+    chrome.runtime.sendMessage({ 
+      action: "ANALYZE_TEXT", 
+      text: txt,
+      audioBase64,
+      audioMimeType
+    }, (response: any) => {
       setLoading(false);
       if (response && response.success) {
         setResult(response.data);
@@ -24,9 +39,61 @@ const ExtensionOverlay: React.FC<Props> = ({ text, onClose }) => {
         setError(response?.error || "Analysis failed");
       }
     });
+  };
+
+  useEffect(() => {
+    // Initial analysis (text only)
+    runAnalysis(text);
   }, [text]);
 
-  // Helper for risk colors (reused logic simplified)
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
+      
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        
+        // Convert to Base64 manually to avoid importing heavy service dependencies in content script
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          const base64Data = base64String.split(',')[1];
+          setAudioAttached(true);
+          runAnalysis(text, base64Data, mimeType);
+        };
+        reader.readAsDataURL(audioBlob);
+
+        // Stop tracks
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Mic access denied:", err);
+      setError("Microphone access denied.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  // Helper for risk colors
   const getRiskColor = (level?: RiskLevel) => {
     if (level === RiskLevel.CONFLICT) return '#fee2e2'; // Red-100
     if (level === RiskLevel.CAUTION) return '#fef3c7'; // Amber-100
@@ -40,11 +107,11 @@ const ExtensionOverlay: React.FC<Props> = ({ text, onClose }) => {
         top: '35px',
         left: '0',
         width: '320px',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        backdropFilter: 'blur(12px)',
         borderRadius: '16px',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
-        border: '1px solid rgba(255,255,255,0.5)',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+        border: '1px solid rgba(255,255,255,0.6)',
         padding: '16px',
         color: '#1c1917',
         fontFamily: 'Inter, sans-serif',
@@ -53,16 +120,55 @@ const ExtensionOverlay: React.FC<Props> = ({ text, onClose }) => {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#57534e' }}>Neuro-Sense</h4>
-        <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#a8a29e' }}>
-          <X size={16} />
-        </button>
+        <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#57534e', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          Neuro-Sense
+          {audioAttached && <Music size={12} color="#10b981" />}
+        </h4>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+           {/* Recording Control */}
+           {!loading && (
+             isRecording ? (
+                <button 
+                  onClick={stopRecording}
+                  style={{ 
+                    display: 'flex', alignItems: 'center', gap: '4px', 
+                    background: '#fee2e2', color: '#dc2626', border: '1px solid #fecaca',
+                    borderRadius: '12px', padding: '4px 8px', fontSize: '11px', fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Square size={10} fill="currentColor" /> Stop
+                </button>
+             ) : (
+                <button 
+                  onClick={startRecording}
+                  title="Add vocal context"
+                  style={{ 
+                    background: audioAttached ? '#d1fae5' : '#f5f5f4', 
+                    color: audioAttached ? '#059669' : '#78716c', 
+                    border: '1px solid',
+                    borderColor: audioAttached ? '#a7f3d0' : '#e7e5e4',
+                    borderRadius: '50%', width: '24px', height: '24px', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Mic size={14} />
+                </button>
+             )
+           )}
+           <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#a8a29e' }}>
+            <X size={16} />
+           </button>
+        </div>
       </div>
 
       {loading && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', color: '#78716c' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '120px', color: '#78716c', flexDirection: 'column', gap: '8px' }}>
           <Loader2 className="animate-spin" size={24} />
-          <span style={{ marginLeft: '8px', fontSize: '13px' }}>Decoding context...</span>
+          <span style={{ fontSize: '13px' }}>
+             {isRecording ? "Analyzing audio..." : "Decoding context..."}
+          </span>
         </div>
       )}
 
@@ -72,7 +178,7 @@ const ExtensionOverlay: React.FC<Props> = ({ text, onClose }) => {
         </div>
       )}
 
-      {result && (
+      {!loading && result && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           
           {/* Risk Badge */}
@@ -99,6 +205,14 @@ const ExtensionOverlay: React.FC<Props> = ({ text, onClose }) => {
             <span style={{ fontSize: '11px', textTransform: 'uppercase', color: '#78716c', fontWeight: 700, display: 'block', marginBottom: '4px' }}>Hidden Subtext</span>
             <p style={{ fontSize: '13px', lineHeight: '1.4', margin: 0, color: '#44403c' }}>{result.emotionalSubtext}</p>
           </div>
+          
+          {/* Vocal Tone (If Available) */}
+          {result.vocalTone && !result.vocalTone.toLowerCase().includes("text only") && (
+             <div style={{ padding: '10px', backgroundColor: '#f3e8ff', borderRadius: '8px', border: '1px solid #e9d5ff' }}>
+              <span style={{ fontSize: '11px', textTransform: 'uppercase', color: '#9333ea', fontWeight: 700, display: 'block', marginBottom: '4px' }}>Vocal Tone</span>
+              <p style={{ fontSize: '13px', lineHeight: '1.4', margin: 0, color: '#6b21a8' }}>{result.vocalTone}</p>
+            </div>
+          )}
 
           {/* Response */}
           <div>

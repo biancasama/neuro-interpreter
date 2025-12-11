@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AnalysisResult, RiskLevel } from '../types';
-import { Check, Copy, AlertTriangle, ShieldCheck, Zap, MessageSquare, BookOpen, Heart, Activity } from 'lucide-react';
+import { Check, Copy, AlertTriangle, ShieldCheck, Zap, MessageSquare, BookOpen, Heart, Activity, Mic } from 'lucide-react';
 
 interface Props {
   result: AnalysisResult | null;
@@ -119,6 +119,19 @@ const AnalysisDashboard: React.FC<Props> = ({ result, t }) => {
           {result.emotionalSubtext}
         </p>
       </section>
+
+      {/* 2.5 Vocal Tone Section (Conditional) */}
+      {result.vocalTone && !result.vocalTone.toLowerCase().includes("text only") && (
+        <section className="bg-purple-50/50 rounded-2xl p-6 border border-purple-100 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+           <h3 className="text-sm font-bold uppercase tracking-wider text-purple-900 flex items-center gap-2 mb-3">
+            <Mic size={16} />
+            {t.vocalToneLabel}
+          </h3>
+          <p className="text-purple-900 text-base leading-relaxed font-medium">
+            {result.vocalTone}
+          </p>
+        </section>
+      )}
 
       {/* 3. Suggested Response Section */}
       <section>

@@ -36,13 +36,17 @@ const analysisSchema: Schema = {
       type: Type.STRING,
       description: "A detailed explanation of the hidden emotions, tone, and intent."
     },
+    vocalTone: {
+      type: Type.STRING,
+      description: "If audio is provided, describe the pitch, volume, speed and what they imply (e.g., sarcasm, anger, hesitance). If no audio, explicitly state 'Text only - tone inferred from punctuation'."
+    },
     suggestedResponse: {
       type: Type.ARRAY,
       items: { type: Type.STRING },
       description: "3 distinct draft replies varying in tone (e.g., Professional, Friendly, Firm)."
     }
   },
-  required: ["riskLevel", "confidenceScore", "literalMeaning", "emotionalSubtext", "suggestedResponse"]
+  required: ["riskLevel", "confidenceScore", "literalMeaning", "emotionalSubtext", "vocalTone", "suggestedResponse"]
 };
 
 export const transcribeAudio = async (
@@ -87,7 +91,9 @@ export const analyzeMessageContext = async (
   useDeepContext: boolean,
   targetLanguage: string = 'English',
   imageBase64?: string,
-  mimeType: string = "image/png"
+  imageMimeType: string = "image/png",
+  audioBase64?: string,
+  audioMimeType: string = "audio/webm"
 ): Promise<AnalysisResult> => {
   
   if (!process.env.API_KEY) {
@@ -102,14 +108,23 @@ export const analyzeMessageContext = async (
     parts.push({
       inlineData: {
         data: imageBase64,
-        mimeType: mimeType
+        mimeType: imageMimeType
+      }
+    });
+  }
+
+  if (audioBase64) {
+    parts.push({
+      inlineData: {
+        data: audioBase64,
+        mimeType: audioMimeType
       }
     });
   }
 
   if (text) {
     parts.push({
-      text: `Analyze this text message/chat: "${text}". \n\nIMPORTANT: Provide the analysis (Literal Meaning, Emotional Subtext, and Suggested Responses) in ${targetLanguage} language.`
+      text: `Analyze this communication. Text content: "${text}". \n\nIMPORTANT: Provide the analysis (Literal Meaning, Emotional Subtext, Vocal Tone, and Suggested Responses) in ${targetLanguage} language.`
     });
   }
 
@@ -118,14 +133,16 @@ export const analyzeMessageContext = async (
   }
 
   const systemInstruction = `
-    You are an expert assistive tool for neurodivergent individuals.
-    Decode the message into three clear sections:
+    You are an expert assistive tool for neurodivergent individuals (Autism/ADHD).
+    Decode the message into clear sections.
+    
     1. Literal Meaning: What the words say directly.
     2. Emotional Subtext: The hidden tone, intent, or feeling.
-    3. Suggested Response: Options for replying.
+    3. Vocal Tone: If audio is provided, analyze the prosody (pitch, pace, volume, pauses) to determine the speaker's true feeling (e.g. is it sarcastic? anxious? angry?).
+    4. Suggested Response: Options for replying.
 
     OUTPUT LANGUAGE: ${targetLanguage}
-    Ensure all string fields in the JSON response are written in ${targetLanguage}, regardless of the input message language.
+    Ensure all string fields in the JSON response are written in ${targetLanguage}.
 
     CRITICAL INTERPRETATION RULE:
     - If emojis appear "on" a message bubble or are described as reactions (especially in screenshots), interpret them as the RECEIVER'S reaction to the Sender, NOT as part of the Sender's message.
