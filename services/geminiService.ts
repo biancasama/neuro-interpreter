@@ -85,6 +85,10 @@ export const analyzeMessageContext = async (
     1. Literal Meaning: What the words say directly.
     2. Emotional Subtext: The hidden tone, intent, or feeling.
     3. Suggested Response: Options for replying.
+
+    CRITICAL INTERPRETATION RULE:
+    - If emojis appear "on" a message bubble or are described as reactions (especially in screenshots), interpret them as the RECEIVER'S reaction to the Sender, NOT as part of the Sender's message.
+    - Only interpret emojis as the Sender's intent if they are clearly typed inside the message text bubble.
   `;
 
   try {

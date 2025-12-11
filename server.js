@@ -37,6 +37,9 @@ Formatting Guidelines:
 - Use _underscores_ for italics.
 - Do NOT use Markdown tables (WhatsApp does not support them).
 - Keep the response concise but empathetic.
+
+CRITICAL INTERPRETATION RULE:
+- If emojis appear "on" a message bubble (especially in screenshots as reactions like hearts, thumbs up, etc.), interpret them as the RECEIVER'S reaction to the SENDER, not as the Sender's own emoji, unless clearly typed in the text line.
 `;
 
 // Helper to fetch image from Twilio URL and convert to Base64 for Gemini
