@@ -5,14 +5,9 @@ export enum RiskLevel {
 }
 
 export interface AnalysisResult {
-  vibeLabel: string;
   riskLevel: RiskLevel;
   confidenceScore: number;
-  reasoning: string;
-  translation: string[];
-  replies: {
-    professional: string;
-    friendly: string;
-    firm: string;
-  };
+  literalMeaning: string;
+  emotionalSubtext: string;
+  suggestedResponse: string[];
 }

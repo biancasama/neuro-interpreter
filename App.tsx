@@ -13,13 +13,13 @@ const App: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleAnalyze = async (text: string, imageBase64?: string, mimeType?: string) => {
+  const handleAnalyze = async (text: string, useDeepContext: boolean, imageBase64?: string, mimeType?: string) => {
     setIsAnalyzing(true);
     setError(null);
     setResult(null);
 
     try {
-      const data = await analyzeMessageContext(text, imageBase64, mimeType);
+      const data = await analyzeMessageContext(text, useDeepContext, imageBase64, mimeType);
       setResult(data);
     } catch (err: any) {
       setError("We couldn't decode that message right now. Please try again or check your API key.");
@@ -35,69 +35,64 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cream-50 font-sans pb-24 relative flex flex-col">
+    <div className="min-h-screen bg-cream-50 font-sans pb-24 relative text-left">
       <Header />
 
-      <main className="flex-grow container mx-auto px-4 pt-6 md:pt-8 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start h-full">
+      <main className="container mx-auto px-6 py-8 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start h-full">
           
           {/* Left Column: Input / Tools */}
-          <div className="lg:col-span-5 xl:col-span-4 space-y-6">
-             <div className="lg:sticky lg:top-24 space-y-6">
-                <div className="bg-white rounded-3xl p-6 shadow-sm border border-cream-300">
-                  <h2 className="text-xl font-semibold text-sage-800 mb-2">Input Context</h2>
-                  <p className="text-sm text-sage-500 mb-6">Upload a screenshot or paste text to begin decoding.</p>
-                  <InputSection onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
+          <section className="space-y-6" aria-label="Input Tools">
+             <div className="bg-cream-50 lg:sticky lg:top-24">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-sage-800 mb-2 text-left">Input Context</h2>
+                  <p className="text-base text-sage-600 leading-relaxed text-left">
+                    Upload a screenshot or paste the text. We will analyze the tone to help you understand what is really being said.
+                  </p>
                 </div>
-                
-                {/* Mobile-only Panic Button location or other tools could go here */}
+                <InputSection onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
              </div>
-          </div>
+          </section>
 
-          {/* Right Column: Output / Decoder */}
-          <div className="lg:col-span-7 xl:col-span-8 min-h-[600px] flex flex-col">
+          {/* Right Column: Analysis Results */}
+          <section className="min-h-[500px] flex flex-col" aria-label="Decoder Results">
              
              {error && (
-              <div className="mb-6 bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-xl flex items-center gap-3 animate-in fade-in" role="alert">
-                <AlertCircle size={20} />
-                <p>{error}</p>
+              <div className="mb-6 bg-rose-50 border-l-4 border-rose-500 text-rose-800 p-4 rounded-r-lg flex items-start gap-3 animate-in fade-in" role="alert">
+                <AlertCircle size={24} className="mt-0.5 flex-shrink-0" />
+                <p className="leading-relaxed">{error}</p>
               </div>
             )}
 
              {isAnalyzing ? (
-                <div className="flex-grow flex flex-col items-center justify-center text-sage-400 space-y-4 animate-pulse">
-                   <DecodingIllustration className="w-48 h-48 opacity-50 grayscale" />
-                   <p className="text-lg font-medium">Analyzing tone and intent...</p>
+                <div className="flex-grow flex flex-col items-center justify-center text-sage-500 space-y-6 animate-pulse p-12 bg-white rounded-3xl border border-sage-100">
+                   <DecodingIllustration className="w-32 h-32 opacity-50 grayscale" />
+                   <p className="text-lg font-medium text-left">Processing context...</p>
                 </div>
              ) : result ? (
-               <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <button 
                     onClick={handleReset}
-                    className="flex items-center gap-2 text-sm text-sage-500 hover:text-sage-800 transition-colors mb-2 lg:hidden"
+                    className="flex items-center gap-2 text-sm font-semibold text-sage-600 hover:text-sage-900 transition-colors mb-4 lg:hidden"
                   >
                     <ArrowLeft size={16} /> Back to Input
                   </button>
                   <AnalysisDashboard result={result} />
                </div>
              ) : (
-               /* Empty State / Intro */
-               <div className="flex-grow flex flex-col items-center justify-center text-center p-8 md:p-12 border-2 border-dashed border-sage-200 rounded-3xl bg-sage-50/50">
-                  <div className="max-w-md space-y-6">
-                    <div className="text-sage-700 mx-auto w-fit">
-                        <DecodingIllustration className="w-64 h-64" />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="text-3xl font-semibold text-sage-800 tracking-tight">
-                        Decoder Ready
-                      </h2>
-                      <p className="text-sage-600 text-lg leading-relaxed">
-                        Use the tools on the left to analyze a conversation. We'll break down the subtext, translate the meaning, and help you craft a response.
-                      </p>
-                    </div>
+               /* Empty State / Placeholder */
+               <div className="flex-grow flex flex-col items-center justify-center p-12 border-2 border-dashed border-sage-200 rounded-3xl bg-white">
+                  <div className="w-64 h-64 mb-6 text-sage-300">
+                      {/* The "Nano Banana" Placeholder */}
+                      <DecodingIllustration className="w-full h-full" />
+                      <span className="sr-only">Illustration of a character decoding a message.</span>
                   </div>
+                  <p className="text-sage-400 font-medium text-lg text-left">
+                    Results will appear here.
+                  </p>
                </div>
              )}
-          </div>
+          </section>
 
         </div>
       </main>

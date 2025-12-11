@@ -19,10 +19,6 @@ export const fileToGenerativePart = async (file: File): Promise<string> => {
 const analysisSchema: Schema = {
   type: Type.OBJECT,
   properties: {
-    vibeLabel: {
-      type: Type.STRING,
-      description: "A single word describing the tone (e.g., Sarcastic, Genuine, Dismissive, Warm)."
-    },
     riskLevel: {
       type: Type.STRING,
       enum: ["Safe", "Caution", "Conflict"],
@@ -30,32 +26,28 @@ const analysisSchema: Schema = {
     },
     confidenceScore: {
       type: Type.INTEGER,
-      description: "A number from 0-100 indicating how confident you are in this interpretation based on the available context."
+      description: "A number from 0-100 indicating confidence in the interpretation."
     },
-    reasoning: {
+    literalMeaning: {
       type: Type.STRING,
-      description: "A 1-2 sentence explanation of the specific cues (punctuation, word choice, emoji) that led to this conclusion."
+      description: "The direct, factual meaning of the words without any subtext."
     },
-    translation: {
+    emotionalSubtext: {
+      type: Type.STRING,
+      description: "A detailed explanation of the hidden emotions, tone, and intent."
+    },
+    suggestedResponse: {
       type: Type.ARRAY,
       items: { type: Type.STRING },
-      description: "3-4 bullet points explaining literally what the person means, removing subtext."
-    },
-    replies: {
-      type: Type.OBJECT,
-      properties: {
-        professional: { type: Type.STRING },
-        friendly: { type: Type.STRING },
-        firm: { type: Type.STRING }
-      },
-      required: ["professional", "friendly", "firm"]
+      description: "3 distinct draft replies varying in tone (e.g., Professional, Friendly, Firm)."
     }
   },
-  required: ["vibeLabel", "riskLevel", "confidenceScore", "reasoning", "translation", "replies"]
+  required: ["riskLevel", "confidenceScore", "literalMeaning", "emotionalSubtext", "suggestedResponse"]
 };
 
 export const analyzeMessageContext = async (
   text: string, 
+  useDeepContext: boolean,
   imageBase64?: string,
   mimeType: string = "image/png"
 ): Promise<AnalysisResult> => {
@@ -88,29 +80,37 @@ export const analyzeMessageContext = async (
   }
 
   const systemInstruction = `
-    You are an expert empathetic communication assistant for neurodivergent individuals (Autism/ADHD). 
-    Your goal is to decode hidden meanings, tones, and intent in text messages.
-    
-    1. Deeply analyze the text for subtle cues (punctuation, capitalization, emoji usage, phrasing).
-    2. Identify the "Vibe": Is it safe, a warning sign, or a conflict?
-    3. Determine a Confidence Score: How sure are you? Ambiguous texts should have lower scores.
-    4. Translate: Explain literally what the person means.
-    5. Coach: Provide 3 draft replies.
+    You are an expert assistive tool for neurodivergent individuals.
+    Decode the message into three clear sections:
+    1. Literal Meaning: What the words say directly.
+    2. Emotional Subtext: The hidden tone, intent, or feeling.
+    3. Suggested Response: Options for replying.
   `;
 
   try {
+    // Model Selection based on Toggle
+    // Deep Context = Gemini 3 Pro + Thinking
+    // Standard = Gemini 2.5 Flash
+    const modelName = useDeepContext ? "gemini-3-pro-preview" : "gemini-2.5-flash";
+    
+    const config: any = {
+      systemInstruction: systemInstruction,
+      responseMimeType: "application/json",
+      responseSchema: analysisSchema,
+    };
+
+    // Only add thinking config if using Gemini 3 Pro
+    if (useDeepContext) {
+      config.thinkingConfig = { thinkingBudget: 2048 };
+    }
+
     const response = await ai.models.generateContent({
-      model: "gemini-3-pro-preview",
+      model: modelName,
       contents: {
         role: "user",
         parts: parts
       },
-      config: {
-        systemInstruction: systemInstruction,
-        responseMimeType: "application/json",
-        responseSchema: analysisSchema,
-        thinkingConfig: { thinkingBudget: 2048 } // Allow "Deep Think"
-      }
+      config: config
     });
 
     if (response.text) {
