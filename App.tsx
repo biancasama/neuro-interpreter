@@ -148,7 +148,7 @@ const App: React.FC = () => {
                <div className="bg-forest/10 p-2 rounded-lg">
                  <Chrome size={24} className="text-forest" />
                </div>
-               <h3 className="text-xl font-bold text-stone-800">Install Neuro-Interpreter</h3>
+               <h3 className="text-xl font-bold text-stone-800">Install Neuro-Sense</h3>
              </div>
              
              <div className="space-y-4 text-stone-600 text-sm leading-relaxed">

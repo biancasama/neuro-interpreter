@@ -133,5 +133,5 @@ app.post('/whatsapp', async (req, res) => {
 
 // Start Server
 app.listen(port, () => {
-  console.log(`Neuro-Interpreter Bot listening on port ${port}`);
+  console.log(`Neuro-Sense Bot listening on port ${port}`);
 });

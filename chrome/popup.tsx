@@ -23,7 +23,7 @@ const Popup: React.FC = () => {
     <div className="w-64 p-4 bg-stone-50 font-sans text-stone-800">
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center font-bold text-lg">N</div>
-        <h1 className="font-bold text-lg">Neuro-Interpreter</h1>
+        <h1 className="font-bold text-lg">Neuro-Sense</h1>
       </div>
 
       <div className="bg-white rounded-xl p-4 shadow-sm border border-stone-200">

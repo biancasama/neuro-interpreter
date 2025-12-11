@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Neuro-Interpreter: Context Decoder",
+  "name": "Neuro-Sense: Context Decoder",
   "version": "1.0.0",
   "description": "Magical context decoder for WhatsApp, Instagram, and Messenger.",
   "permissions": [
@@ -31,7 +31,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Neuro-Interpreter Settings"
+    "default_title": "Neuro-Sense Settings"
   },
   "web_accessible_resources": [
     {

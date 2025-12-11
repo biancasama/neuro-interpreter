@@ -9,7 +9,7 @@ const BrainLogo = ({ size = 48, className = "" }: { size?: number, className?: s
     fill="none" 
     xmlns="http://www.w3.org/2000/svg" 
     className={className}
-    aria-label="Neuro-Interpreter Logo"
+    aria-label="Neuro-Sense Logo"
     strokeLinecap="round" 
     strokeLinejoin="round"
   >
@@ -59,7 +59,7 @@ const Header: React.FC = () => {
         
         <div className="flex flex-col">
           <h1 className="text-3xl md:text-5xl font-extrabold text-stone-900 tracking-tight leading-tight">
-            Neuro-Interpreter
+            Neuro-Sense
           </h1>
           <p className="text-sm md:text-base text-stone-600 font-semibold tracking-wide mt-1">
             Magical Context Decoder

@@ -53,7 +53,7 @@ const ExtensionOverlay: React.FC<Props> = ({ text, onClose }) => {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#57534e' }}>Neuro-Interpreter</h4>
+        <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#57534e' }}>Neuro-Sense</h4>
         <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#a8a29e' }}>
           <X size={16} />
         </button>
