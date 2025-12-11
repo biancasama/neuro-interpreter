@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnalysisResult, RiskLevel } from '../types';
-import { Check, Copy, MessageCircle, AlertTriangle, ShieldCheck, Zap, Pencil, Trash2, Plus, X, Save } from 'lucide-react';
+import { Check, Copy, AlertTriangle, ShieldCheck, Zap, Pencil, Trash2, Plus, X, Save } from 'lucide-react';
+import { VibeIllustration, TranslationIllustration, CoachIllustration } from './Illustrations';
 
 interface Props {
   result: AnalysisResult | null;
@@ -81,8 +82,9 @@ const AnalysisDashboard: React.FC<Props> = ({ result }) => {
         
         {/* Card 1: Vibe Check */}
         <div className={`col-span-1 rounded-3xl p-6 border ${theme.bg} ${theme.border} shadow-sm relative overflow-hidden`}>
-           <div className="absolute top-0 right-0 p-3 opacity-10">
-              {theme.icon}
+           {/* Decorative Illustration */}
+           <div className="absolute top-4 right-4 text-sage-800 opacity-10 pointer-events-none">
+              <VibeIllustration className="w-24 h-24" />
            </div>
            
            {/* COGA Guidance: Avoid All-Caps. Use Sentence Case/Bold for headers. */}
@@ -90,7 +92,7 @@ const AnalysisDashboard: React.FC<Props> = ({ result }) => {
              {theme.icon} Vibe check
            </h3>
            
-           <div className="flex flex-col items-center justify-center py-4">
+           <div className="flex flex-col items-center justify-center py-4 relative z-10">
              <span className={`text-4xl font-bold ${theme.text} mb-2 capitalize`}>
                {result.vibeLabel}
              </span>
@@ -104,12 +106,15 @@ const AnalysisDashboard: React.FC<Props> = ({ result }) => {
         </div>
 
         {/* Card 2: Literal Translation */}
-        <div className="col-span-1 bg-white rounded-3xl p-6 border border-cream-300 shadow-sm">
-          <h3 className="text-sm text-sage-500 font-bold mb-4 flex items-center gap-2">
-            <MessageCircle size={18} />
+        <div className="col-span-1 bg-white rounded-3xl p-6 border border-cream-300 shadow-sm relative overflow-hidden">
+          <div className="absolute top-2 right-2 text-sage-200 pointer-events-none">
+             <TranslationIllustration className="w-20 h-20" />
+          </div>
+
+          <h3 className="text-sm text-sage-500 font-bold mb-4 flex items-center gap-2 relative z-10">
             Literal translation
           </h3>
-          <ul className="space-y-3">
+          <ul className="space-y-3 relative z-10">
             {result.translation.map((point, idx) => (
               <li key={idx} className="flex items-start gap-3 text-sage-800 leading-relaxed">
                 <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-sage-400 flex-shrink-0" />
@@ -122,10 +127,13 @@ const AnalysisDashboard: React.FC<Props> = ({ result }) => {
       </div>
 
       {/* Card 3: Reply Coach */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-cream-300 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
+      <div className="bg-white rounded-3xl p-6 md:p-8 border border-cream-300 shadow-sm relative overflow-hidden">
+        <div className="absolute top-4 right-8 text-sage-100 pointer-events-none hidden md:block">
+            <CoachIllustration className="w-24 h-24" />
+        </div>
+
+        <div className="flex items-center justify-between mb-6 relative z-10">
           <h3 className="text-sm text-sage-500 font-bold flex items-center gap-2">
-            <MessageCircle size={18} />
             Reply coach
           </h3>
           <button 
@@ -138,7 +146,7 @@ const AnalysisDashboard: React.FC<Props> = ({ result }) => {
           </button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
           {replies.map((reply) => (
             <EditableReplyCard 
               key={reply.id} 
@@ -193,7 +201,6 @@ const EditableReplyCard: React.FC<{
        <div className="flex flex-col h-full bg-white rounded-2xl border-2 border-sage-300 p-4 shadow-md relative animate-in fade-in zoom-in-95 duration-200">
          <div className="mb-3">
            <label htmlFor={`label-${item.id}`} className="sr-only">Reply Label</label>
-           {/* COGA Guidance: Visible Focus indicators are mandatory. Replaced focus:ring-0 with focus:ring-2. */}
            <input 
              id={`label-${item.id}`}
              value={label}
@@ -238,7 +245,6 @@ const EditableReplyCard: React.FC<{
     <div className="flex flex-col h-full bg-cream-50 rounded-2xl border border-cream-200 p-4 hover:border-sage-300 transition-all relative group">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-bold text-sage-500 px-1.5 py-0.5 bg-sage-100/50 rounded">{item.label}</span>
-        {/* COGA Guidance: Predictability. Removed group-hover opacity dependency. Controls are always visible to reduce cognitive load/anxiety. */}
         <div className="flex items-center gap-1">
            <button 
             onClick={() => setIsEditing(true)}
