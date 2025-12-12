@@ -1,5 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, X, Image as ImageIcon, Loader2, BrainCircuit, Sparkles, Mic, Square, Globe, Music } from 'lucide-react';
+import { X, Image as ImageIcon, Loader2, BrainCircuit, Sparkles, Mic, Square, Globe, Music } from 'lucide-react';
 import { fileToGenerativePart, transcribeAudio } from '../services/geminiService';
 
 interface InputSectionProps {
@@ -31,14 +32,23 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   
-  // Initialize from localStorage or default to Neutral
+  // Initialize from localStorage or default to Neutral with safety check
   const [selectedAccent, setSelectedAccent] = useState(() => {
-    return localStorage.getItem('neuroSense_voiceAccent') || "Neutral";
+    try {
+      return localStorage.getItem('neuroSense_voiceAccent') || "Neutral";
+    } catch (e) {
+      console.warn("LocalStorage access failed", e);
+      return "Neutral";
+    }
   });
 
-  // Persist selection to localStorage
+  // Persist selection to localStorage with safety check
   useEffect(() => {
-    localStorage.setItem('neuroSense_voiceAccent', selectedAccent);
+    try {
+      localStorage.setItem('neuroSense_voiceAccent', selectedAccent);
+    } catch (e) {
+      console.warn("LocalStorage save failed", e);
+    }
   }, [selectedAccent]);
 
   const [audioData, setAudioData] = useState<{ base64: string, mimeType: string } | null>(null);
@@ -179,41 +189,32 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
   return (
     <div className="h-full flex flex-col">
         
-        <div className="flex-grow space-y-6">
-          
-          {/* Input Controls Container */}
-          <div className="relative group">
-            <label htmlFor="message-input" className="sr-only">
-              Paste Message Text
-            </label>
-            
-            {/* Toolbar overlay for Voice Settings */}
-            <div className="absolute top-2 right-2 z-20 flex items-center gap-2 bg-white/80 backdrop-blur-sm p-1.5 rounded-lg border border-stone-200 shadow-sm">
+        <div className="flex-grow space-y-3">
+
+          {/* Voice Toolbar - Positioned above text area */}
+          <div className="flex justify-end items-center gap-3 flex-wrap">
                {/* Accent Selector */}
-               <div className="relative flex items-center group/accent">
-                 <Globe size={14} className="text-stone-400 ml-1.5" />
+               <div className="relative flex items-center group/accent bg-white/60 border border-stone-200 rounded-lg px-3 py-1.5 shadow-sm hover:bg-white hover:border-stone-300 transition-all">
+                 <Globe size={14} className="text-stone-400 mr-2" />
                  <select 
                     value={selectedAccent}
                     onChange={(e) => setSelectedAccent(e.target.value)}
                     disabled={isRecording || isTranscribing}
-                    className="bg-transparent text-xs font-medium text-stone-600 p-1.5 pr-6 outline-none cursor-pointer appearance-none w-32"
+                    className="bg-transparent text-xs font-semibold text-stone-600 outline-none cursor-pointer appearance-none w-32 md:w-40"
                     title={t.voiceAccent}
                  >
                    {ACCENTS.map(acc => <option key={acc.value} value={acc.value}>{acc.label}</option>)}
                  </select>
-                 <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
+                 <div className="pointer-events-none text-stone-400 ml-1">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                  </div>
                </div>
-
-               {/* Divider */}
-               <div className="w-px h-4 bg-stone-300 mx-1"></div>
 
                {/* Mic Button */}
                {isRecording ? (
                  <button
                    onClick={stopRecording}
-                   className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-md border border-red-200 hover:bg-red-100 transition-all animate-pulse"
+                   className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg border border-red-200 hover:bg-red-100 transition-all animate-pulse shadow-sm"
                  >
                    <Square size={14} fill="currentColor" />
                    <span className="text-xs font-bold">{t.stop}</span>
@@ -222,14 +223,21 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t }
                  <button
                    onClick={startRecording}
                    disabled={isTranscribing}
-                   className="p-1.5 text-stone-500 hover:text-forest hover:bg-stone-100 rounded-md transition-colors relative"
+                   className="flex items-center gap-2 px-3 py-1.5 bg-white/60 border border-stone-200 text-stone-600 hover:text-forest hover:bg-white rounded-lg transition-all shadow-sm group"
                    title={t.voiceDictation}
                  >
-                   {isTranscribing ? <Loader2 size={16} className="animate-spin" /> : <Mic size={16} />}
+                   {isTranscribing ? <Loader2 size={14} className="animate-spin" /> : <Mic size={14} className="group-hover:scale-110 transition-transform" />}
+                   <span className="text-xs font-bold">{isTranscribing ? "Transcribing..." : t.voiceDictation}</span>
                  </button>
                )}
-            </div>
-
+          </div>
+          
+          {/* Input Controls Container */}
+          <div className="relative group">
+            <label htmlFor="message-input" className="sr-only">
+              Paste Message Text
+            </label>
+            
             {/* Gradient Top Shadow for depth */}
             <div className="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-white/80 to-transparent pointer-events-none z-10 rounded-t-xl"></div>
             
