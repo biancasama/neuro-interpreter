@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import RightDecoder from '../components/RightDecoder';
@@ -8,7 +7,7 @@ import { Language } from '../types';
 
 // --- Configuration ---
 const SIDEBAR_ID = 'neuro-sense-sidebar-root';
-const LANDING_PAGE_MARKER = 'extension-installed'; // Marker class for Landing Page detection
+const LANDING_PAGE_MARKER = 'extension-installed'; // The marker class the landing page looks for
 
 declare var chrome: any;
 
@@ -54,7 +53,7 @@ function handleUrlChangeOrDomUpdate() {
 
   // B. Detect Active Chat Context using Robust Selectors
   
-  // WhatsApp: Looks for the main chat pane ID
+  // WhatsApp: Looks for the main chat pane ID (#main)
   const isWhatsAppChatOpen = 
     window.location.hostname.includes('whatsapp') && 
     !!document.getElementById('main'); 

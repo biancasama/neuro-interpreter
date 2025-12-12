@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { AnalysisResult, Language, Memory, RiskLevel, GroundingData } from './types';
 import { analyzeMessageContext, getNearbySupportPlaces } from './services/geminiService';
