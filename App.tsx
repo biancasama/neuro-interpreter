@@ -23,27 +23,28 @@ const Footer = ({ theme, t }: { theme: 'light' | 'dark', t: any }) => {
         <div className="flex flex-col md:flex-row md:justify-between gap-12">
             
             {/* Brand Section - Aligned with Logo on left, text column on right */}
-            <div className="flex flex-col md:max-w-xs items-start">
-               <div className="flex items-center gap-3 mb-6">
-                 <div className="-ml-1">
-                    <BrainLogo size={32} />
-                 </div>
-                 <span className={`font-bold text-xl md:text-2xl ${textPrimary}`}>Neuro-Sense</span>
+            <div className="flex flex-row gap-4 md:max-w-xs items-start">
+               <div className="pt-1 flex-shrink-0">
+                 <BrainLogo size={32} />
                </div>
-               
-               <p className={`text-sm ${textSecondary} mb-6 leading-relaxed`}>
-                 {t.heroSubtitle.split('. ').map((sent: string, i: number) => (
-                   <React.Fragment key={i}>
-                     {sent}{i < 2 ? '. ' : ''}{i === 1 && <br/>}
-                   </React.Fragment>
-                 ))}
-               </p>
-               
-               <div className={`flex items-center gap-4 ${textSecondary}`}>
-                <a href="#" className="hover:text-indigo-500 transition-colors"><Youtube size={20} /></a>
-                <a href="#" className="hover:text-indigo-500 transition-colors"><Instagram size={20} /></a>
-                <a href="#" className="hover:text-indigo-500 transition-colors"><Music size={20} /></a>
-                <a href="#" className="hover:text-indigo-500 transition-colors"><Twitter size={20} /></a>
+               <div className="flex flex-col items-start">
+                   <div className="flex items-center gap-3 mb-4 h-8">
+                     <span className={`font-bold text-xl md:text-2xl ${textPrimary}`}>Neuro-Sense</span>
+                   </div>
+                   <p className={`text-sm ${textSecondary} mb-6 leading-relaxed`}>
+                     {t.heroSubtitle.split('. ').map((sent: string, i: number) => (
+                       <React.Fragment key={i}>
+                         {sent}{i < 2 ? '. ' : ''}{i === 1 && <br/>}
+                       </React.Fragment>
+                     ))}
+                   </p>
+                   
+                   <div className={`flex items-center gap-4 ${textSecondary}`}>
+                    <a href="#" className="hover:text-indigo-500 transition-colors"><Youtube size={20} /></a>
+                    <a href="#" className="hover:text-indigo-500 transition-colors"><Instagram size={20} /></a>
+                    <a href="#" className="hover:text-indigo-500 transition-colors"><Music size={20} /></a>
+                    <a href="#" className="hover:text-indigo-500 transition-colors"><Twitter size={20} /></a>
+                   </div>
                </div>
             </div>
 

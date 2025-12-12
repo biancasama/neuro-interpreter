@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Image as ImageIcon, FileText, Mic, X, Loader2, Upload, StopCircle, Globe, BrainCircuit } from 'lucide-react';
+import { Image as ImageIcon, FileText, Mic, X, Loader2, Upload, StopCircle, Globe, BrainCircuit, Wand2, Sparkles } from 'lucide-react';
 import { fileToGenerativePart } from '../services/geminiService';
 
 interface InputSectionProps {
@@ -19,8 +19,8 @@ declare global {
 }
 
 const ACCENTS = [
-  "Neutral", 
   "Auto-Detect Accent",
+  "Neutral", 
   "American", 
   "British", 
   "Australian", 
@@ -49,9 +49,24 @@ const ACCENT_LANG_MAP: Record<string, string> = {
   "Irish": "en-IE",
   "Scottish": "en-GB", 
   "South African": "en-ZA",
+  "English (Italian)": "it-IT", // Fallback or hint
+  "English (French)": "fr-FR",
+  "English (German)": "de-DE",
+  "English (Spanish)": "es-ES",
   "Neutral": "en-US",
-  "Auto-Detect Accent": "en-US" 
-  // Others default to en-US in logic below
+  "Auto-Detect Accent": "navigator" // Special flag
+};
+
+const getBrowserAccentSuggestion = (): string => {
+  const lang = navigator.language;
+  if (lang.startsWith('en-US')) return 'American';
+  if (lang.startsWith('en-GB')) return 'British';
+  if (lang.startsWith('en-AU')) return 'Australian';
+  if (lang.startsWith('en-CA')) return 'Canadian';
+  if (lang.startsWith('en-IN')) return 'Indian';
+  if (lang.startsWith('en-IE')) return 'Irish';
+  if (lang.startsWith('en-ZA')) return 'South African';
+  return 'Neutral';
 };
 
 const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, theme }) => {
@@ -81,14 +96,19 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
   const [plainMode, setPlainMode] = useState(true);
 
   // Voice Accent State
-  const [voiceAccent, setVoiceAccent] = useState('Neutral');
+  const [voiceAccent, setVoiceAccent] = useState('Auto-Detect Accent');
+  const [suggestedAccent, setSuggestedAccent] = useState<string>('');
 
-  // Load Accent from LocalStorage
+  // Load Accent from LocalStorage or Suggest based on Browser
   useEffect(() => {
     const savedAccent = localStorage.getItem('ns_voice_accent');
+    const suggestion = getBrowserAccentSuggestion();
+    setSuggestedAccent(suggestion);
+
     if (savedAccent) {
       setVoiceAccent(savedAccent);
-    }
+    } 
+    // Default remains Auto-Detect if nothing saved
   }, []);
 
   // Cleanup recognition on unmount
@@ -104,6 +124,10 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
     const newAccent = e.target.value;
     setVoiceAccent(newAccent);
     localStorage.setItem('ns_voice_accent', newAccent);
+    
+    // If we are recording, we might want to restart recognition to pick up new lang,
+    // but standard behavior is usually to let current stream finish. 
+    // For now, we update the state so the FINAL analysis uses the correct accent context.
   };
 
   // Styles based on theme
@@ -173,8 +197,15 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
         recognition.continuous = true;
         recognition.interimResults = true;
         
-        // Map Accent to Language Code for better recognition
-        const langCode = ACCENT_LANG_MAP[voiceAccent] || 'en-US';
+        // Determine Language for Recognition
+        let langCode = 'en-US';
+        if (voiceAccent === 'Auto-Detect Accent') {
+           // Use browser's native language for best "Auto" experience
+           langCode = navigator.language || 'en-US';
+        } else {
+           langCode = ACCENT_LANG_MAP[voiceAccent] || 'en-US';
+        }
+        
         recognition.lang = langCode;
 
         baseTextRef.current = text; // Snapshot current text so we append to it
@@ -271,27 +302,64 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
   const DeepContextToggle = () => (
     <div 
       onClick={() => setUseDeepContext(!useDeepContext)}
-      className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border ${
-        useDeepContext 
-          ? (theme === 'dark' ? 'bg-indigo-900/20 border-indigo-500/50' : 'bg-indigo-50 border-indigo-200')
-          : (theme === 'dark' ? 'bg-[#383838] border-transparent' : 'bg-white border-stone-200')
-      } mb-6`}
+      className={`
+        relative overflow-hidden group
+        flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all duration-300 border-2
+        ${useDeepContext 
+          ? 'border-indigo-500 bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-600 shadow-xl shadow-indigo-500/30 scale-[1.01]' 
+          : (theme === 'dark' ? 'bg-[#2C2C2C] border-indigo-500/30 hover:border-indigo-400' : 'bg-white border-indigo-100 hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-500/10')
+        } 
+        mb-8
+      `}
     >
-       <div className={`p-2 rounded-full transition-colors ${
-         useDeepContext ? 'bg-indigo-500 text-white' : 'bg-stone-200 text-stone-500'
-       }`}>
-         <BrainCircuit size={18} />
+       {/* Background decoration for active state */}
+       {useDeepContext && (
+          <div className="absolute inset-0 bg-white opacity-10 mix-blend-overlay"></div>
+       )}
+
+       {/* Icon Box */}
+       <div className={`
+         w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 flex-shrink-0 shadow-sm
+         ${useDeepContext 
+           ? 'bg-white/20 text-white backdrop-blur-md rotate-12 scale-110' 
+           : (theme === 'dark' ? 'bg-[#383838] text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20' : 'bg-indigo-50 text-indigo-600 group-hover:scale-110 group-hover:bg-indigo-100')
+         }
+       `}>
+         {useDeepContext ? <Sparkles size={24} fill="currentColor" className="animate-pulse" /> : <BrainCircuit size={24} />}
        </div>
-       <div className="flex flex-col">
-         <span className={`text-sm font-bold ${textPrimary}`}>Deep Context (Gemini 3 Pro)</span>
-         <span className="text-xs text-stone-500">Enhanced reasoning for complex social cues</span>
+       
+       {/* Text Content */}
+       <div className="flex flex-col relative z-10">
+         <div className="flex items-center gap-2 mb-0.5">
+            <span className={`text-lg font-bold ${useDeepContext ? 'text-white' : textPrimary}`}>
+              Deep Context
+            </span>
+            {!useDeepContext && (
+               <span className="flex h-2 w-2 relative">
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+               </span>
+            )}
+         </div>
+         <span className={`text-sm ${useDeepContext ? 'text-indigo-100 font-medium' : textSecondary}`}>
+           Gemini 3 Pro reasoning for complex cues
+         </span>
        </div>
-       <div className={`ml-auto w-10 h-6 rounded-full relative transition-colors ${
-          useDeepContext ? 'bg-indigo-500' : 'bg-stone-300'
-       }`}>
-         <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${
-           useDeepContext ? 'right-1' : 'left-1'
-         }`}></div>
+
+       {/* Toggle Switch UI */}
+       <div className={`
+          ml-auto w-14 h-8 rounded-full relative transition-all duration-300 flex-shrink-0 border
+          ${useDeepContext 
+             ? 'bg-indigo-400/30 border-indigo-300/50' 
+             : (theme === 'dark' ? 'bg-stone-800 border-stone-600' : 'bg-stone-100 border-stone-200')
+          }
+       `}>
+         <div className={`
+           absolute top-1 w-6 h-6 rounded-full shadow-md transition-all duration-300 flex items-center justify-center
+           ${useDeepContext ? 'bg-white right-1 translate-x-0' : 'bg-white left-1 translate-x-0 border border-stone-100'}
+         `}>
+            {useDeepContext && <Sparkles size={12} className="text-indigo-600" />}
+         </div>
        </div>
     </div>
   );
@@ -391,16 +459,24 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
 
           {/* Microphone Trigger / status */}
           <div className="absolute bottom-6 right-6 flex flex-col items-end gap-3">
-             {/* Accent Selector (Near Mic) */}
-             <div className={`flex items-center gap-2 p-2 rounded-xl transition-all ${theme === 'dark' ? 'bg-[#383838]' : 'bg-white border border-stone-200 shadow-sm'}`}>
-                <Globe size={16} className={theme === 'dark' ? 'text-stone-400' : 'text-stone-500'} />
-                <select 
-                  value={voiceAccent}
-                  onChange={handleAccentChange}
-                  className={`bg-transparent text-sm font-medium outline-none cursor-pointer ${theme === 'dark' ? 'text-stone-300' : 'text-stone-600'} max-w-[150px]`}
-                >
-                  {ACCENTS.map(a => <option key={a} value={a}>{a}</option>)}
-                </select>
+             
+             {/* Accent Selector (Interactive) */}
+             <div className={`flex flex-col items-end gap-1 ${isRecording ? 'opacity-100' : 'opacity-90'} transition-opacity`}>
+               {voiceAccent === 'Auto-Detect Accent' && suggestedAccent && (
+                 <span className={`text-[10px] uppercase font-bold tracking-wider ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} animate-pulse`}>
+                   Suggestion: {suggestedAccent}
+                 </span>
+               )}
+               <div className={`flex items-center gap-2 p-2 rounded-xl transition-all ${theme === 'dark' ? 'bg-[#383838]' : 'bg-white border border-stone-200 shadow-sm'}`}>
+                  <Globe size={16} className={theme === 'dark' ? 'text-stone-400' : 'text-stone-500'} />
+                  <select 
+                    value={voiceAccent}
+                    onChange={handleAccentChange}
+                    className={`bg-transparent text-sm font-medium outline-none cursor-pointer ${theme === 'dark' ? 'text-stone-300' : 'text-stone-600'} max-w-[150px]`}
+                  >
+                    {ACCENTS.map(a => <option key={a} value={a}>{a}</option>)}
+                  </select>
+               </div>
              </div>
 
             {recordedAudio && !isRecording && (
