@@ -231,7 +231,7 @@ const App: React.FC = () => {
                {/* INPUT SECTION ("The second frame") */}
                <div id="decode-section" ref={decodeSectionRef} className="animate-in fade-in slide-in-from-bottom-8 duration-700 mb-12 scroll-mt-24">
                   <div className="mb-8">
-                    <h2 className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>Decode</h2>
+                    <h2 className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>Decode Intention</h2>
                     <p className={`text-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
                       Paste the confusing text or upload a screenshot.
                     </p>
