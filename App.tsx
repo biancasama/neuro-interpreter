@@ -164,7 +164,7 @@ const App: React.FC = () => {
     try {
       const langNameMap: Record<Language, string> = {
           en: 'English', es: 'Spanish', fr: 'French', de: 'German', 
-          it: 'Italian', pt: 'Portuguese', ja: 'Japanese'
+          it: 'Italian', pt: 'Portuguese', ja: 'Japanese', ar: 'Arabic'
       };
       
       const data = await analyzeMessageContext(
@@ -295,8 +295,10 @@ const App: React.FC = () => {
         }
         /* Smart Button Styles */
         .btn-wa-active { display: none; }
-        body.extension-active .btn-default { display: none !important; }
-        body.extension-active .btn-wa-active { display: inline-flex !important; }
+        
+        /* When extension is detected (via content script class injection), swap buttons */
+        body.extension-installed .btn-default { display: none !important; }
+        body.extension-installed .btn-wa-active { display: inline-flex !important; }
       `}</style>
       
       {/* Theme Toggle (Floating) */}

@@ -32,4 +32,4 @@ export interface Memory {
   analysis: AnalysisResult;
 }
 
-export type Language = 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'ja';
+export type Language = 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'ja' | 'ar';
