@@ -39,7 +39,7 @@ const analysisSchema: Schema = {
     },
     vocalTone: {
       type: Type.STRING,
-      description: "If audio is provided, describe the pitch, volume, speed, and implied emotion. Also identify the accent or origin if 'Auto-Detect Accent' was requested or if it's distinct."
+      description: "If audio or video is provided, describe the pitch, volume, speed, implied emotion, facial expressions, and body language. Also identify the accent or origin if applicable."
     },
     suggestedResponse: {
       type: Type.ARRAY,
@@ -124,7 +124,9 @@ export const analyzeMessageContext = async (
   imageMimeType: string = "image/png",
   audioBase64?: string,
   audioMimeType: string = "audio/webm",
-  voiceAccent?: string
+  voiceAccent?: string,
+  videoBase64?: string,
+  videoMimeType: string = "video/mp4"
 ): Promise<AnalysisResult> => {
   
   if (!process.env.API_KEY) {
@@ -153,14 +155,27 @@ export const analyzeMessageContext = async (
     });
   }
 
+  if (videoBase64) {
+    parts.push({
+      inlineData: {
+        data: videoBase64,
+        mimeType: videoMimeType
+      }
+    });
+  }
+
   let promptText = `Analyze this communication. Text content: "${text}".`;
   
-  if (audioBase64) {
+  if (audioBase64 || videoBase64) {
       if (voiceAccent === 'Auto-Detect Accent') {
-         promptText += `\n\nContext: The audio contains speech. Please analyze the speaker's accent/origin as part of the vocal tone analysis.`;
+         promptText += `\n\nContext: The media contains speech/visuals. Please analyze the speaker's accent/origin as part of the vocal tone/visual analysis.`;
       } else if (voiceAccent && voiceAccent !== 'Neutral') {
-         promptText += `\n\nContext: The speaker in the audio has a ${voiceAccent} accent.`;
+         promptText += `\n\nContext: The speaker has a ${voiceAccent} accent.`;
       }
+  }
+
+  if (videoBase64) {
+    promptText += `\n\nContext: This is a video. Pay attention to body language, facial expressions, and movement.`;
   }
 
   promptText += `\n\nIMPORTANT: Provide the analysis (Literal Meaning, Emotional Subtext, Vocal Tone, Idioms/Sarcasm, and Suggested Responses) in ${targetLanguage} language.`;
@@ -205,7 +220,7 @@ export const analyzeMessageContext = async (
     Decode the message into clear sections.
     1. Literal Meaning: What the words say directly.
     2. Emotional Subtext: The hidden tone, intent, or feeling.
-    3. Vocal Tone: Prosody analysis.
+    3. Vocal Tone: Prosody analysis. If video is provided, include analysis of body language and facial expressions.
     4. Suggested Response: Options for replying.
     5. Idioms & Sarcasm: Specifically explicitly check for idioms (e.g. "Ball is in your court", "Break a leg"), metaphors, or sarcasm (saying the opposite of what is meant). If found, set 'idiomsAndSarcasm.present' to true and explain the cultural meaning in 'explanation'.
 

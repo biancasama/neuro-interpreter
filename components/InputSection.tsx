@@ -1,10 +1,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Image as ImageIcon, FileText, Mic, X, Loader2, Upload, StopCircle, Globe, BrainCircuit, Wand2, Sparkles, ChevronDown, Keyboard } from 'lucide-react';
+import { Image as ImageIcon, FileText, Mic, X, Loader2, Upload, StopCircle, Globe, BrainCircuit, Wand2, Sparkles, ChevronDown, Keyboard, Video } from 'lucide-react';
 import { fileToGenerativePart } from '../services/geminiService';
 
 interface InputSectionProps {
-  onAnalyze: (text: string, useDeepContext: boolean, imageBase64?: string, imageMimeType?: string, audioBase64?: string, audioMimeType?: string, voiceAccent?: string) => void;
+  onAnalyze: (text: string, useDeepContext: boolean, imageBase64?: string, imageMimeType?: string, audioBase64?: string, audioMimeType?: string, voiceAccent?: string, videoBase64?: string, videoMimeType?: string) => void;
   isAnalyzing: boolean;
   t: any;
   theme: 'light' | 'dark';
@@ -172,7 +172,7 @@ const DeepContextToggle: React.FC<{
 };
 
 const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, theme, sensorySafe }) => {
-  const [mode, setMode] = useState<'selection' | 'text' | 'image' | 'audio'>('selection');
+  const [mode, setMode] = useState<'selection' | 'text' | 'image' | 'audio' | 'video'>('selection');
   const [text, setText] = useState('');
   
   // Deep Context Mode (Gemini 3 Pro)
@@ -181,7 +181,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
   // File State
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [fileType, setFileType] = useState<'image' | 'audio' | null>(null);
+  const [fileType, setFileType] = useState<'image' | 'audio' | 'video' | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Audio Recording State
@@ -261,6 +261,11 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
       } else if (file.type.startsWith('audio/')) {
         setFileType('audio');
         setMode('audio');
+      } else if (file.type.startsWith('video/')) {
+        const url = URL.createObjectURL(file);
+        setFilePreview(url);
+        setFileType('video');
+        setMode('video');
       }
     }
   };
@@ -361,6 +366,8 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
     let imgMimeType = undefined;
     let audioBase64 = undefined;
     let audioMimeType = undefined;
+    let videoBase64 = undefined;
+    let videoMimeType = undefined;
 
     if (fileType === 'image' && selectedFile) {
       imgBase64 = await fileToGenerativePart(selectedFile);
@@ -370,6 +377,11 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
     if (fileType === 'audio' && selectedFile) {
        audioBase64 = await fileToGenerativePart(selectedFile);
        audioMimeType = selectedFile.type;
+    }
+
+    if (fileType === 'video' && selectedFile) {
+      videoBase64 = await fileToGenerativePart(selectedFile);
+      videoMimeType = selectedFile.type;
     }
 
     if (recordedAudio) {
@@ -385,7 +397,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
       });
     }
 
-    onAnalyze(text, useDeepContext, imgBase64, imgMimeType, audioBase64, audioMimeType, voiceAccent);
+    onAnalyze(text, useDeepContext, imgBase64, imgMimeType, audioBase64, audioMimeType, voiceAccent, videoBase64, videoMimeType);
   };
 
   // --- Render Modes ---
@@ -434,7 +446,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept="image/*,audio/*"
+            accept="image/*,audio/*,video/*"
             className="hidden"
         />
 
@@ -742,6 +754,66 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
             `}
           >
             {t.analyzeAudio}
+          </button>
+        </div>
+      </div>
+     )
+  }
+
+  // Video File Preview Mode
+  if (mode === 'video' && filePreview) {
+     return (
+      <div className={`h-full flex flex-col justify-between min-h-[400px] ${!sensorySafe && 'animate-in fade-in slide-in-from-right-4'}`}>
+         <div className={`relative flex-grow rounded-3xl overflow-hidden mb-6 border ${theme === 'dark' ? 'border-[#383838] bg-[#2C2C2C]' : 'border-stone-200 bg-stone-50'}`}>
+            <video 
+              src={filePreview} 
+              controls 
+              className="w-full h-full object-contain p-4"
+            />
+            <button 
+              onClick={resetSelection}
+              className="absolute top-4 right-4 p-3 bg-black/50 text-white rounded-full hover:bg-black/70 backdrop-blur-sm transition-all"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className={`absolute bottom-4 left-4 flex items-center gap-2 p-2 rounded-xl transition-all backdrop-blur-md ${theme === 'dark' ? 'bg-black/50' : 'bg-white/50 border border-stone-200/50 shadow-sm'}`}>
+                <Globe size={16} className={theme === 'dark' ? 'text-stone-300' : 'text-stone-600'} />
+                <select 
+                  value={voiceAccent}
+                  onChange={handleAccentChange}
+                  className={`bg-transparent text-xs font-medium outline-none cursor-pointer ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'}`}
+                >
+                  {ACCENTS.map(a => <option key={a} value={a}>{a}</option>)}
+                </select>
+             </div>
+         </div>
+
+         <DeepContextToggle 
+          isEnabled={useDeepContext} 
+          onToggle={() => setUseDeepContext(!useDeepContext)} 
+          theme={theme} 
+          sensorySafe={sensorySafe}
+        />
+
+         <div className="flex gap-4">
+          <button 
+            onClick={resetSelection}
+            className={`px-8 py-5 rounded-2xl font-bold text-lg transition-colors ${theme === 'dark' ? 'bg-[#2C2C2C] text-stone-300 hover:bg-[#383838]' : 'bg-stone-100 text-stone-600 hover:bg-stone-200'}`}
+          >
+            {t.backBtn}
+          </button>
+          <button
+            onClick={handleSubmit}
+            className={`
+              flex-grow py-5 rounded-2xl font-bold text-xl shadow-xl transition-all
+              ${sensorySafe 
+                ? 'bg-stone-700 text-white hover:bg-stone-800'
+                : 'bg-[#6366F1] hover:bg-[#5558DD] text-white'
+              }
+            `}
+          >
+            {t.analyzeVideo}
           </button>
         </div>
       </div>

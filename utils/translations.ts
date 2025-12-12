@@ -13,7 +13,7 @@ export const translations: Record<Language, any> = {
     // Input Section
     letMakeSense: "Let's make sense of this together.",
     uploadFile: "Upload file",
-    uploadDesc: "Screenshot or Audio",
+    uploadDesc: "Image, Audio or Video",
     pasteText: "Paste chat text",
     pasteDesc: "Or use microphone",
     plainMode: "Plain language mode",
@@ -23,6 +23,7 @@ export const translations: Record<Language, any> = {
     analyzeAudioText: "Analyze Audio & Text",
     analyzeScreenshot: "Analyze Screenshot",
     analyzeAudio: "Analyze Audio",
+    analyzeVideo: "Analyze Video",
     backBtn: "Back",
     
     // Footer
@@ -106,7 +107,7 @@ export const translations: Record<Language, any> = {
 
     letMakeSense: "Vamos a entender esto juntos.",
     uploadFile: "Subir archivo",
-    uploadDesc: "Captura o Audio",
+    uploadDesc: "Imagen, Audio o Video",
     pasteText: "Pegar texto",
     pasteDesc: "O usar micrófono",
     plainMode: "Modo lenguaje sencillo",
@@ -116,6 +117,7 @@ export const translations: Record<Language, any> = {
     analyzeAudioText: "Analizar Audio y Texto",
     analyzeScreenshot: "Analizar Captura",
     analyzeAudio: "Analizar Audio",
+    analyzeVideo: "Analizar Video",
     backBtn: "Volver",
 
     footerUseCases: "Casos de Uso",
@@ -198,7 +200,7 @@ export const translations: Record<Language, any> = {
 
     letMakeSense: "Comprenons cela ensemble.",
     uploadFile: "Télécharger un fichier",
-    uploadDesc: "Capture ou Audio",
+    uploadDesc: "Image, Audio ou Vidéo",
     pasteText: "Coller le texte",
     pasteDesc: "Ou utiliser le micro",
     plainMode: "Mode langage simple",
@@ -208,6 +210,7 @@ export const translations: Record<Language, any> = {
     analyzeAudioText: "Analyser Audio & Texte",
     analyzeScreenshot: "Analyser la Capture",
     analyzeAudio: "Analyser l'Audio",
+    analyzeVideo: "Analyser la Vidéo",
     backBtn: "Retour",
 
     footerUseCases: "Cas d'usage",
@@ -290,7 +293,7 @@ export const translations: Record<Language, any> = {
 
     letMakeSense: "Lass uns das gemeinsam verstehen.",
     uploadFile: "Datei hochladen",
-    uploadDesc: "Screenshot oder Audio",
+    uploadDesc: "Bild, Audio oder Video",
     pasteText: "Chat-Text einfügen",
     pasteDesc: "Oder Mikrofon nutzen",
     plainMode: "Einfache Sprache",
@@ -300,6 +303,7 @@ export const translations: Record<Language, any> = {
     analyzeAudioText: "Audio & Text analysieren",
     analyzeScreenshot: "Screenshot analysieren",
     analyzeAudio: "Audio analysieren",
+    analyzeVideo: "Video analysieren",
     backBtn: "Zurück",
 
     footerUseCases: "Anwendungsfälle",
@@ -382,7 +386,7 @@ export const translations: Record<Language, any> = {
 
     letMakeSense: "Facciamo chiarezza insieme.",
     uploadFile: "Carica file",
-    uploadDesc: "Screenshot o Audio",
+    uploadDesc: "Screenshot, Audio o Video",
     pasteText: "Incolla testo chat",
     pasteDesc: "O usa il microfono",
     plainMode: "Modalità linguaggio semplice",
@@ -392,6 +396,7 @@ export const translations: Record<Language, any> = {
     analyzeAudioText: "Analizza Audio e Testo",
     analyzeScreenshot: "Analizza Screenshot",
     analyzeAudio: "Analizza Audio",
+    analyzeVideo: "Analizza Video",
     backBtn: "Indietro",
 
     footerUseCases: "Casi d'uso",
@@ -474,7 +479,7 @@ export const translations: Record<Language, any> = {
 
     letMakeSense: "Vamos entender isso juntos.",
     uploadFile: "Enviar arquivo",
-    uploadDesc: "Captura ou Áudio",
+    uploadDesc: "Imagem, Áudio ou Vídeo",
     pasteText: "Colar texto do chat",
     pasteDesc: "Ou usar microfone",
     plainMode: "Modo linguagem simples",
@@ -484,6 +489,7 @@ export const translations: Record<Language, any> = {
     analyzeAudioText: "Analisar Áudio e Texto",
     analyzeScreenshot: "Analisar Captura",
     analyzeAudio: "Analisar Áudio",
+    analyzeVideo: "Analisar Vídeo",
     backBtn: "Voltar",
 
     footerUseCases: "Casos de Uso",
@@ -566,7 +572,7 @@ export const translations: Record<Language, any> = {
 
     letMakeSense: "一緒に意味を理解しましょう。",
     uploadFile: "ファイルをアップロード",
-    uploadDesc: "スクリーンショットまたは音声",
+    uploadDesc: "スクリーンショット、音声、またはビデオ",
     pasteText: "チャットテキストを貼り付け",
     pasteDesc: "またはマイクを使用",
     plainMode: "平易な言語モード",
@@ -576,6 +582,7 @@ export const translations: Record<Language, any> = {
     analyzeAudioText: "音声とテキストを分析",
     analyzeScreenshot: "スクリーンショットを分析",
     analyzeAudio: "音声を分析",
+    analyzeVideo: "ビデオを分析",
     backBtn: "戻る",
 
     footerUseCases: "使用例",

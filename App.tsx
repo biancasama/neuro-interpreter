@@ -150,7 +150,9 @@ const App: React.FC = () => {
     imageMimeType?: string,
     audioBase64?: string,
     audioMimeType?: string,
-    voiceAccent?: string
+    voiceAccent?: string,
+    videoBase64?: string,
+    videoMimeType?: string
   ) => {
     setIsAnalyzing(true);
     setError(null);
@@ -173,7 +175,9 @@ const App: React.FC = () => {
         imageMimeType,
         audioBase64, 
         audioMimeType,
-        voiceAccent
+        voiceAccent,
+        videoBase64,
+        videoMimeType
       );
       setResult(data);
 
