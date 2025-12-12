@@ -145,42 +145,8 @@ const AnalysisDashboard: React.FC<Props> = ({ result, nearbyPlaces, theme, compa
   // Check if vocal tone is meaningful (not just text fallback)
   const hasVocalAnalysis = result.vocalTone && !result.vocalTone.toLowerCase().includes("text only");
 
-  // Vibe Check Colors & Icon
-  const getVibeConfig = (level: string) => {
-    switch (level) {
-      case 'Safe': 
-        return {
-          bg: theme === 'dark' ? 'bg-emerald-900/30' : 'bg-green-100',
-          text: theme === 'dark' ? 'text-emerald-300' : 'text-green-800',
-          border: theme === 'dark' ? 'border-emerald-500/30' : 'border-green-200',
-          icon: <ShieldCheck size={28} className={theme === 'dark' ? 'text-emerald-400' : 'text-green-600'} />,
-          label: "Safe"
-        };
-      case 'Caution': 
-        return {
-          bg: theme === 'dark' ? 'bg-amber-900/30' : 'bg-yellow-100',
-          text: theme === 'dark' ? 'text-amber-300' : 'text-yellow-800',
-          border: theme === 'dark' ? 'border-amber-500/30' : 'border-yellow-200',
-          icon: <AlertTriangle size={28} className={theme === 'dark' ? 'text-amber-400' : 'text-yellow-600'} />,
-          label: "Caution"
-        };
-      case 'Conflict': 
-        return {
-          bg: theme === 'dark' ? 'bg-rose-900/30' : 'bg-red-100',
-          text: theme === 'dark' ? 'text-rose-300' : 'text-red-800',
-          border: theme === 'dark' ? 'border-rose-500/30' : 'border-red-200',
-          icon: <Zap size={28} className={theme === 'dark' ? 'text-rose-400' : 'text-red-600'} />,
-          label: "Conflict"
-        };
-      default: 
-        return {
-          bg: 'bg-stone-100', text: 'text-stone-800', border: 'border-stone-200',
-          icon: <ShieldCheck size={28} />, label: "Unknown"
-        };
-    }
-  };
-
-  const vibe = getVibeConfig(result.riskLevel);
+  // Determine active state for the Vibe Check Traffic Light
+  const activeLevel = result.riskLevel;
 
   const handleToggleMore = () => {
     if (moreRepliesOpen) {
@@ -202,18 +168,78 @@ const AnalysisDashboard: React.FC<Props> = ({ result, nearbyPlaces, theme, compa
       <div>
         <h2 className={`text-3xl md:text-4xl font-bold mb-8 ${textPrimary} transition-transform duration-300 hover:scale-105 hover:-translate-y-1 origin-left cursor-default inline-block`}>Interpretations</h2>
         
-        {/* VIBE CHECK (Risk Assessment) */}
-        <div className={`mb-8 p-6 rounded-3xl border flex items-center gap-6 ${vibe.bg} ${vibe.border}`}>
-            <div className={`p-4 rounded-full ${sensorySafe ? 'bg-transparent border' : 'bg-white/50 backdrop-blur-sm shadow-sm'}`}>
-              {vibe.icon}
-            </div>
-            <div>
-               <h3 className={`text-xs font-bold uppercase tracking-wider mb-1 opacity-80 ${vibe.text}`}>
-                 {t.vibeCheck || "Vibe Check"}
-               </h3>
-               <p className={`text-2xl font-bold ${vibe.text}`}>
-                 {vibe.label} <span className="text-base font-normal opacity-75">({result.confidenceScore}% Certainty)</span>
-               </p>
+        {/* NEW VIBE CHECK (Traffic Light Glassmorphism) */}
+        <div className="mb-8">
+            <div className={`
+              w-full p-5 rounded-[20px] backdrop-blur-xl border transition-all
+              ${theme === 'dark' 
+                 ? 'bg-white/10 border-white/10 shadow-lg shadow-black/20' 
+                 : 'bg-white/75 border-white/60 shadow-lg shadow-stone-200/50'
+              }
+            `}>
+                {/* Header */}
+                <div className="flex justify-between items-center mb-4 pb-3 border-b border-stone-200/10">
+                   <span className={`text-[11px] font-extrabold tracking-[0.1em] uppercase ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>Vibe Check</span>
+                   <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${theme === 'dark' ? 'bg-white/10 text-white' : 'bg-black/5 text-stone-700'}`}>
+                     {result.confidenceScore}% Certainty
+                   </span>
+                </div>
+
+                {/* Traffic Light Grid */}
+                <div className="flex gap-3 justify-between">
+                    
+                    {/* SAFE INDICATOR */}
+                    <div className={`
+                       flex-1 flex flex-col items-center justify-center py-3 px-2 rounded-2xl transition-all duration-300
+                       ${activeLevel === RiskLevel.SAFE 
+                          ? 'opacity-100 bg-white transform -translate-y-1 scale-105 shadow-[0_8px_20px_rgba(52,211,153,0.3)]' 
+                          : `opacity-60 ${theme === 'dark' ? 'bg-white/5' : 'bg-white/40'}`
+                       }
+                    `}>
+                       <ShieldCheck 
+                         size={24} 
+                         className={`mb-1.5 transition-colors duration-300 ${activeLevel === RiskLevel.SAFE ? 'text-emerald-500' : (theme === 'dark' ? 'text-stone-500' : 'text-stone-400')}`} 
+                       />
+                       <span className={`text-[10px] font-bold ${activeLevel === RiskLevel.SAFE ? 'text-emerald-500' : (theme === 'dark' ? 'text-stone-500' : 'text-stone-400')}`}>
+                         Safe
+                       </span>
+                    </div>
+
+                    {/* CAUTION INDICATOR */}
+                    <div className={`
+                       flex-1 flex flex-col items-center justify-center py-3 px-2 rounded-2xl transition-all duration-300
+                       ${activeLevel === RiskLevel.CAUTION
+                          ? 'opacity-100 bg-white transform -translate-y-1 scale-105 shadow-[0_8px_20px_rgba(251,191,36,0.3)]' 
+                          : `opacity-60 ${theme === 'dark' ? 'bg-white/5' : 'bg-white/40'}`
+                       }
+                    `}>
+                       <AlertTriangle 
+                         size={24} 
+                         className={`mb-1.5 transition-colors duration-300 ${activeLevel === RiskLevel.CAUTION ? 'text-amber-500' : (theme === 'dark' ? 'text-stone-500' : 'text-stone-400')}`} 
+                       />
+                       <span className={`text-[10px] font-bold ${activeLevel === RiskLevel.CAUTION ? 'text-amber-500' : (theme === 'dark' ? 'text-stone-500' : 'text-stone-400')}`}>
+                         Caution
+                       </span>
+                    </div>
+
+                    {/* CONFLICT INDICATOR */}
+                    <div className={`
+                       flex-1 flex flex-col items-center justify-center py-3 px-2 rounded-2xl transition-all duration-300
+                       ${activeLevel === RiskLevel.CONFLICT
+                          ? 'opacity-100 bg-white transform -translate-y-1 scale-105 shadow-[0_8px_20px_rgba(248,113,113,0.3)]' 
+                          : `opacity-60 ${theme === 'dark' ? 'bg-white/5' : 'bg-white/40'}`
+                       }
+                    `}>
+                       <Zap 
+                         size={24} 
+                         className={`mb-1.5 transition-colors duration-300 ${activeLevel === RiskLevel.CONFLICT ? 'text-rose-500' : (theme === 'dark' ? 'text-stone-500' : 'text-stone-400')}`} 
+                       />
+                       <span className={`text-[10px] font-bold ${activeLevel === RiskLevel.CONFLICT ? 'text-rose-500' : (theme === 'dark' ? 'text-stone-500' : 'text-stone-400')}`}>
+                         Conflict
+                       </span>
+                    </div>
+
+                </div>
             </div>
         </div>
         

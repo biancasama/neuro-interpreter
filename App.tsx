@@ -101,8 +101,33 @@ const Footer = ({ theme, t, sensorySafe }: { theme: 'light' | 'dark', t: any, se
         <div className={`h-px w-full ${theme === 'dark' ? 'bg-white/10' : 'bg-stone-200'}`}></div>
 
         {/* Bottom Section */}
-        <div className={`text-sm ${textSecondary} text-center md:text-left`}>
-           {t.footerRights}
+        <div className={`w-full flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm ${textSecondary}`}>
+           <div className="text-center md:text-left order-2 md:order-1">
+              {t.footerRights}
+           </div>
+           
+           <div className="flex items-center gap-2 order-1 md:order-2 opacity-80 hover:opacity-100 transition-opacity cursor-default">
+              <span>Powered by</span>
+              
+              {/* Gemini 3 */}
+              <div className={`flex items-center gap-1.5 font-semibold ${textPrimary}`}>
+                 <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"/>
+                 </svg>
+                 <span>Gemini 3</span>
+              </div>
+              
+              <span>and</span>
+              
+              {/* Google AI Studio */}
+              <div className={`flex items-center gap-1.5 font-semibold ${textPrimary}`}>
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                    <path d="M12 2V10M12 14V22M2 12H10M14 12H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  <span>Google AI Studio</span>
+              </div>
+           </div>
         </div>
 
       </div>
@@ -490,7 +515,7 @@ const App: React.FC = () => {
         
         {/* Co-Pilot Body Double Avatar (Bottom Left) */}
         {!accessibility.sensorySafe && (
-             <BodyDoubleAvatar theme={theme} enabled={accessibility.coPilot} />
+          <BodyDoubleAvatar theme={theme} enabled={accessibility.coPilot} />
         )}
 
       </div>
