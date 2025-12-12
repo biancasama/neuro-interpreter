@@ -36,17 +36,22 @@ const Footer = ({ theme, t, sensorySafe }: { theme: 'light' | 'dark', t: any, se
                <div className="pt-1 flex-shrink-0">
                  <BrainLogo size={32} />
                </div>
-               <div className="flex flex-col items-start">
+               <div className="flex flex-col items-start w-full">
                    <div className="flex items-center gap-3 mb-4 h-8">
                      <span className={`font-bold text-xl md:text-2xl ${textPrimary}`}>Neuro-Sense</span>
                    </div>
-                   <p className={`text-sm ${textSecondary} mb-6 leading-relaxed`}>
-                     {t.heroSubtitle.split('. ').map((sent: string, i: number) => (
-                       <React.Fragment key={i}>
-                         {sent}{i < 2 ? '. ' : ''}{i === 1 && <br/>}
-                       </React.Fragment>
-                     ))}
-                   </p>
+                   
+                   {/* Staggered Footer Subtitle */}
+                   <div className={`text-sm ${textSecondary} mb-6 leading-relaxed flex flex-col w-full`}>
+                     {t.heroSubtitle.split('. ').map((sent: string, i: number) => {
+                       const alignClass = i === 0 ? 'text-left' : (i === 1 ? 'text-right' : 'text-center');
+                       return (
+                         <span key={i} className={`block ${alignClass}`}>
+                           {sent}{i < 2 ? '.' : ''}
+                         </span>
+                       )
+                     })}
+                   </div>
                    
                    <div className={`flex items-center gap-4 ${textSecondary}`}>
                     <a href="#" className="hover:text-indigo-500 transition-colors"><Youtube size={20} /></a>
@@ -294,21 +299,28 @@ const App: React.FC = () => {
                   
                   {/* Hero Text Side */}
                   <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1">
-                    <div className="mb-6 md:mb-8">
+                    <div className="mb-6 md:mb-8 w-full">
                         {/* Logo logic remains mostly same, just size adjusted */}
                         <div className="md:hidden mb-6 flex justify-center"><BrainLogo size={80} /></div> 
-                        <div className="hidden md:flex mb-6"><BrainLogo size={100} /></div> 
+                        {/* Desktop: Increased size, negative margin to visually align with text below */}
+                        <div className="hidden md:flex mb-6 -ml-4"><BrainLogo size={140} /></div> 
                         
                         <h1 className={`text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight ${textClass}`}>
                           Neuro-Sense
                         </h1>
-                        <p className={`text-lg md:text-2xl lg:text-3xl font-medium leading-relaxed max-w-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
-                          {t.heroSubtitle.split('. ').map((sent: string, i: number) => (
-                             <React.Fragment key={i}>
-                               {sent}{i < 2 ? '. ' : ''}{i === 1 && <br/>}
-                             </React.Fragment>
-                          ))}
-                        </p>
+                        
+                        {/* Staggered Alignment Subtitle */}
+                        <div className={`w-full max-w-lg flex flex-col gap-2 md:gap-4 text-lg md:text-2xl lg:text-3xl font-medium leading-relaxed ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
+                           {t.heroSubtitle.split('. ').map((sent: string, i: number) => {
+                             // Dynamic Alignment: Left -> Right -> Center
+                             const alignClass = i === 0 ? 'text-left' : (i === 1 ? 'text-right' : 'text-center');
+                             return (
+                               <span key={i} className={`block ${alignClass}`}>
+                                 {sent}{i < 2 ? '.' : ''}
+                               </span>
+                             )
+                           })}
+                        </div>
                     </div>
                     
                     <button 
