@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AnalysisResult, RiskLevel } from '../types';
 import { Copy, Check } from 'lucide-react';
@@ -19,27 +20,30 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact }) => {
   const borderCol = theme === 'dark' ? 'border-[#383838]' : 'border-stone-100';
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-12 pb-12">
       
       {/* SECTION 1: INTERPRETATIONS */}
       <div>
-        <h2 className={`text-3xl font-bold mb-6 ${textPrimary}`}>Interpretations</h2>
+        <h2 className={`text-3xl md:text-4xl font-bold mb-8 ${textPrimary}`}>Interpretations</h2>
         
         {/* Summary */}
-        <div className="mb-6">
-          <h3 className={`text-sm font-semibold mb-2 ${textSecondary}`}>Summary</h3>
-          <p className={`text-xl font-medium leading-relaxed ${textPrimary}`}>
+        <div className="mb-8 p-6 rounded-2xl border border-transparent bg-opacity-50" style={{ backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }}>
+          <h3 className={`text-sm font-bold uppercase tracking-wide mb-3 ${textSecondary}`}>Executive Summary</h3>
+          <p className={`text-xl md:text-2xl font-medium leading-relaxed ${textPrimary}`}>
             {result.emotionalSubtext}
           </p>
         </div>
 
         {/* Possible Interpretations List */}
-        <div className="space-y-4">
-          <h3 className={`text-sm font-semibold mb-2 ${textSecondary}`}>Possible interpretations</h3>
+        <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-3 md:gap-6">
+          <div className="md:col-span-3 mb-2 md:mb-0">
+             <h3 className={`text-sm font-bold uppercase tracking-wide mb-4 ${textSecondary}`}>Key Signals</h3>
+          </div>
           
           {/* Card 1: Tone/Vibe */}
           <InterpretationCard 
             title={result.vocalTone && !result.vocalTone.includes("Text only") ? result.vocalTone : "Neutral / Ambiguous tone"} 
+            label="Vocal/Tone"
             confidence="Medium" 
             theme={theme}
           />
@@ -47,6 +51,7 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact }) => {
            {/* Card 2: Literal */}
            <InterpretationCard 
             title={result.literalMeaning} 
+            label="Literal Meaning"
             confidence="High" 
             theme={theme}
           />
@@ -54,6 +59,7 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact }) => {
           {/* Card 3: Risk Level */}
           <InterpretationCard 
             title={result.riskLevel === 'Safe' ? 'Safe to reply' : (result.riskLevel === 'Caution' ? 'Proceed with caution' : 'Conflict detected')} 
+            label="Risk Assessment"
             confidence={result.confidenceScore > 80 ? 'High' : 'Medium'} 
             theme={theme}
           />
@@ -62,9 +68,9 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact }) => {
 
       {/* SECTION 2: SUGGESTED REPLIES */}
       <div>
-        <h2 className={`text-3xl font-bold mb-6 ${textPrimary}`}>Suggested Replies</h2>
+        <h2 className={`text-3xl md:text-4xl font-bold mb-8 ${textPrimary}`}>Suggested Replies</h2>
         
-        <div className="space-y-4">
+        <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
           {result.suggestedResponse.map((reply, idx) => (
              <ReplyCard 
                key={idx} 
@@ -75,13 +81,13 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact }) => {
           ))}
         </div>
 
-        {/* "Generate replies" Toggle Section from Mockup */}
-        <div className="mt-8">
-           <h3 className={`text-sm font-semibold mb-3 ${textSecondary}`}>Generate replies</h3>
-           <div className={`p-4 rounded-2xl flex items-center justify-between ${cardBg} border ${borderCol}`}>
-              <span className={`font-medium ${textPrimary}`}>Suggest highlighted replies</span>
-              <div className={`w-12 h-6 rounded-full relative ${theme === 'dark' ? 'bg-indigo-500/30' : 'bg-indigo-100'}`}>
-                <div className="absolute right-1 top-1 w-4 h-4 bg-indigo-500 rounded-full"></div>
+        {/* "Generate replies" Toggle Section */}
+        <div className="mt-10 max-w-lg">
+           <h3 className={`text-sm font-semibold mb-3 ${textSecondary}`}>Actions</h3>
+           <div className={`p-5 rounded-2xl flex items-center justify-between cursor-pointer hover:bg-opacity-80 transition-all ${cardBg} border ${borderCol}`}>
+              <span className={`font-medium text-lg ${textPrimary}`}>Suggest more replies</span>
+              <div className={`w-14 h-7 rounded-full relative ${theme === 'dark' ? 'bg-indigo-500/30' : 'bg-indigo-100'}`}>
+                <div className="absolute right-1 top-1 w-5 h-5 bg-indigo-500 rounded-full shadow-sm"></div>
               </div>
            </div>
         </div>
@@ -93,27 +99,27 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact }) => {
 
 interface InterpretationCardProps {
   title: string;
+  label: string;
   confidence: string;
   theme: 'light' | 'dark';
 }
 
-const InterpretationCard: React.FC<InterpretationCardProps> = ({ title, confidence, theme }) => {
-  const cardBg = theme === 'dark' ? 'bg-[#2C2C2C]' : 'bg-[#FFFBF5]'; // Slight warmth for light mode card per mockup
-  const textPrimary = theme === 'dark' ? 'text-white' : 'text-stone-900';
-  
-  // Mockup has specific creamy/yellowish bg for interpretation cards
+const InterpretationCard: React.FC<InterpretationCardProps> = ({ title, label, confidence, theme }) => {
   const specificBg = theme === 'dark' ? 'bg-[#2C2C2C]' : 'bg-[#FFFCF6]'; 
   const border = theme === 'dark' ? 'border-[#383838]' : 'border-stone-100';
+  const textPrimary = theme === 'dark' ? 'text-white' : 'text-stone-900';
 
   return (
-    <div className={`p-5 rounded-2xl border ${border} ${specificBg} flex items-end justify-between shadow-sm`}>
-      <div className="pr-4">
-        <p className={`text-lg font-medium leading-tight ${textPrimary}`}>
+    <div className={`p-6 rounded-3xl border ${border} ${specificBg} flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow h-full min-h-[160px]`}>
+      <div>
+        <span className="text-xs font-bold uppercase tracking-wider text-stone-400 mb-2 block">{label}</span>
+        <p className={`text-lg font-medium leading-tight ${textPrimary} line-clamp-4`}>
           {title}
         </p>
-        <span className="text-xs text-stone-400 mt-2 block">{confidence} confidence</span>
       </div>
-      <span className="text-xs text-stone-400 font-medium">{confidence}</span>
+      <div className="mt-4 pt-4 border-t border-stone-200/50 flex justify-end">
+         <span className="text-xs text-stone-400 font-medium bg-stone-100/50 px-2 py-1 rounded-md">{confidence} Confidence</span>
+      </div>
     </div>
   );
 };
@@ -138,18 +144,21 @@ const ReplyCard: React.FC<ReplyCardProps> = ({ text, label, theme }) => {
   };
 
   return (
-    <div className={`p-5 rounded-2xl border ${border} ${cardBg} shadow-sm relative group`}>
-       <p className={`text-lg font-medium mb-4 pr-12 ${textPrimary}`}>
-         {text}
+    <div className={`p-6 rounded-3xl border ${border} ${cardBg} shadow-sm relative group hover:shadow-md transition-all flex flex-col justify-between h-full`}>
+       <p className={`text-xl font-medium mb-6 pr-4 leading-relaxed ${textPrimary}`}>
+         "{text}"
        </p>
-       <p className="text-xs text-stone-400">{label}</p>
-
-       <button 
-         onClick={handleCopy}
-         className={`absolute top-4 right-4 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${copied ? 'bg-green-500 text-white' : (theme === 'dark' ? 'bg-[#383838] text-stone-300 hover:bg-[#454545]' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100')}`}
-       >
-         {copied ? "Copied" : "Copy"}
-       </button>
+       
+       <div className="flex items-center justify-between mt-auto">
+         <p className="text-sm font-bold text-stone-400 uppercase tracking-wide">{label}</p>
+         <button 
+           onClick={handleCopy}
+           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${copied ? 'bg-green-500 text-white' : (theme === 'dark' ? 'bg-[#383838] text-stone-300 hover:bg-[#454545]' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100')}`}
+         >
+           {copied ? <Check size={14}/> : <Copy size={14}/>}
+           {copied ? "Copied" : "Copy"}
+         </button>
+       </div>
     </div>
   );
 };

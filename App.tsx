@@ -16,71 +16,72 @@ const Footer = ({ theme }: { theme: 'light' | 'dark' }) => {
   const borderCol = theme === 'dark' ? 'border-white/10' : 'border-stone-200';
 
   return (
-    <footer className={`w-full py-8 mt-12 border-t ${borderCol} transition-colors duration-500`}>
-      <div className="flex flex-col gap-8 text-left">
+    <footer className={`w-full py-12 mt-16 border-t ${borderCol} transition-colors duration-500`}>
+      <div className="flex flex-col gap-12 text-left max-w-5xl mx-auto">
         
-        {/* Brand Section */}
-        <div className="flex flex-col items-start">
-           <div className="flex items-center gap-2 mb-2">
-             <BrainLogo size={24} />
-             <span className={`font-bold text-lg ${textPrimary}`}>Neuro-Sense</span>
-           </div>
-           <p className={`text-xs ${textSecondary} mb-4 leading-relaxed`}>
-             Magical context decoder.<br/>Understand tone, reply with confidence.
-           </p>
-        </div>
+        {/* Top Section: Brand + Links */}
+        <div className="flex flex-col md:flex-row md:justify-between gap-12">
+            
+            {/* Brand Section */}
+            <div className="flex flex-col items-start md:max-w-xs">
+               <div className="flex items-center gap-3 mb-4">
+                 <BrainLogo size={32} />
+                 <span className={`font-bold text-xl md:text-2xl ${textPrimary}`}>Neuro-Sense</span>
+               </div>
+               <p className={`text-sm ${textSecondary} mb-6 leading-relaxed`}>
+                 Magical context decoder for the modern world.<br/>Understand tone, reply with confidence.
+               </p>
+               
+               {/* Socials - Moved here for desktop layout balance */}
+               <div className={`flex items-center gap-4 ${textSecondary}`}>
+                <a href="#" className="hover:text-indigo-500 transition-colors"><Youtube size={20} /></a>
+                <a href="#" className="hover:text-indigo-500 transition-colors"><Instagram size={20} /></a>
+                <a href="#" className="hover:text-indigo-500 transition-colors"><Music size={20} /></a>
+                <a href="#" className="hover:text-indigo-500 transition-colors"><Twitter size={20} /></a>
+               </div>
+            </div>
 
-        {/* Links Grid - Mobile Friendly */}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8">
-           {/* Column 1 */}
-           <div>
-             <h4 className={`font-bold text-sm mb-3 ${textPrimary}`}>Use Cases</h4>
-             <ul className={`space-y-2 text-xs ${textSecondary}`}>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Individuals</a></li>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Couples</a></li>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Workplace</a></li>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Therapy Support</a></li>
-             </ul>
-           </div>
+            {/* Links Grid - Responsive */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-8 md:gap-x-24">
+               {/* Column 1 */}
+               <div>
+                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>Use Cases</h4>
+                 <ul className={`space-y-3 text-sm ${textSecondary}`}>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Individuals</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Couples</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Workplace</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Therapy Support</a></li>
+                 </ul>
+               </div>
 
-           {/* Column 2 */}
-           <div>
-             <h4 className={`font-bold text-sm mb-3 ${textPrimary}`}>Company</h4>
-             <ul className={`space-y-2 text-xs ${textSecondary}`}>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Careers</a></li>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Blog</a></li>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Influencer program</a></li>
-             </ul>
-           </div>
+               {/* Column 2 */}
+               <div>
+                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>Company</h4>
+                 <ul className={`space-y-3 text-sm ${textSecondary}`}>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Careers</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Blog</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Influencer program</a></li>
+                 </ul>
+               </div>
 
-           {/* Column 3 (Span 2 to center or fill) */}
-           <div className="col-span-2">
-             <h4 className={`font-bold text-sm mb-3 ${textPrimary}`}>Legal</h4>
-             <ul className={`space-y-2 text-xs ${textSecondary} flex flex-col`}>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Terms of Service</a></li>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Privacy Policy</a></li>
-               <li><a href="#" className="hover:text-indigo-500 transition-colors">Refund Policy</a></li>
-             </ul>
-           </div>
+               {/* Column 3 */}
+               <div className="col-span-2 md:col-span-1">
+                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>Legal</h4>
+                 <ul className={`space-y-3 text-sm ${textSecondary} flex flex-col`}>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Terms of Service</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Privacy Policy</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Refund Policy</a></li>
+                 </ul>
+               </div>
+            </div>
         </div>
 
         {/* Divider */}
         <div className={`h-px w-full ${theme === 'dark' ? 'bg-white/10' : 'bg-stone-200'}`}></div>
 
-        {/* Bottom Section: Copyright & Socials */}
-        <div className="flex flex-col gap-4">
-          
-          <div className={`text-xs ${textSecondary}`}>
-             Copyright © 2025 Neuro-Sense, Inc.<br/> All rights reserved.
-          </div>
-
-          <div className={`flex items-center gap-4 ${textSecondary}`}>
-            <a href="#" className="hover:text-indigo-500 transition-colors"><Youtube size={18} /></a>
-            <a href="#" className="hover:text-indigo-500 transition-colors"><Instagram size={18} /></a>
-            <a href="#" className="hover:text-indigo-500 transition-colors"><Music size={18} /></a>
-            <a href="#" className="hover:text-indigo-500 transition-colors"><Twitter size={18} /></a>
-            <a href="#" className="hover:text-indigo-500 transition-colors"><MessageCircle size={18} /></a>
-          </div>
+        {/* Bottom Section */}
+        <div className={`text-sm ${textSecondary} text-center md:text-left`}>
+           Copyright © 2025 Neuro-Sense, Inc. All rights reserved.
         </div>
 
       </div>
@@ -158,16 +159,25 @@ const App: React.FC = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  // Common Container Classes for the "Mobile App" look
+  // Responsive Container Classes
   const containerClass = `
-    min-h-screen transition-colors duration-500 ease-in-out font-sans flex flex-col items-center justify-center p-4
+    min-h-screen transition-colors duration-500 ease-in-out font-sans flex flex-col items-center justify-center 
+    p-4 md:p-8 lg:p-12
     ${theme === 'dark' ? 'bg-[#121212] text-[#E0E0E0]' : 'bg-[#F2F4F8] text-[#1F2937]'}
   `;
 
+  // Responsive Card Classes
+  // Mobile: max-w-md, rounded-[2.5rem], fixedish height
+  // Desktop: max-w-7xl, rounded-[3rem], auto height, generous padding
   const cardClass = `
-    w-full max-w-md bg-white rounded-[2.5rem] overflow-hidden relative flex flex-col shadow-2xl transition-all duration-500
+    w-full relative flex flex-col shadow-2xl transition-all duration-500 overflow-hidden
     ${theme === 'dark' ? 'bg-[#1E1E1E] shadow-black/40' : 'bg-white shadow-stone-200'}
-    max-h-[90vh] h-[800px]
+    
+    /* Mobile Defaults */
+    max-w-md rounded-[2.5rem] h-[85vh]
+    
+    /* Desktop Overrides */
+    md:max-w-6xl md:h-auto md:min-h-[85vh] md:rounded-[3rem]
   `;
 
   return (
@@ -184,7 +194,7 @@ const App: React.FC = () => {
       {/* Main App Card */}
       <div className={cardClass}>
         
-        {/* Header - Fixed at top */}
+        {/* Header - Fixed at top relative to card on mobile, normal flow on desktop often better but let's keep sticky-ish feel */}
         <div className="flex-none z-10 bg-inherit border-b border-transparent">
            <Header 
             view={view} 
@@ -194,45 +204,58 @@ const App: React.FC = () => {
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="flex-grow overflow-y-auto custom-scrollbar px-8 pb-8 scroll-smooth">
+        {/* On Desktop, we want the scrollbar to be on the window if content is long, or inside card? 
+            Given h-auto on desktop, the scroll will be on the main window if it exceeds viewport. 
+            But here we have overflow-y-auto on this div. 
+            Let's keep inner scrolling for consistency with the "App in a Card" metaphor even on desktop.
+        */}
+        <div className="flex-grow overflow-y-auto custom-scrollbar px-6 pb-8 md:px-16 md:pb-16 scroll-smooth">
           
           {/* VIEW 1: HOME (Hero + Input stacked) */}
           {view === 'home' && (
-            <div className="flex flex-col min-h-full pt-4">
+            <div className="flex flex-col min-h-full pt-4 md:pt-12">
+               
                {/* Main Hero Content */}
-               <div className="flex flex-col items-center text-center justify-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500 pt-8">
-                  <div className="mb-6 flex flex-col items-center">
-                    <BrainLogo size={80} className="mb-6" />
-                    <h1 className={`text-4xl font-bold mb-3 tracking-tight ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>
-                      Neuro-Sense
-                    </h1>
-                    <p className={`text-lg font-medium ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
-                      Understand tone. Reply with confidence.
-                    </p>
+               <div className="flex flex-col md:flex-row items-center justify-between gap-12 mb-24 animate-in fade-in slide-in-from-bottom-4 duration-500 pt-8 max-w-5xl mx-auto w-full">
+                  
+                  {/* Hero Text Side */}
+                  <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1">
+                    <div className="mb-6 md:mb-8">
+                        <div className="md:hidden mb-6 flex justify-center"><BrainLogo size={80} /></div> {/* Mobile Logo */}
+                        <div className="hidden md:flex mb-6"><BrainLogo size={100} /></div> {/* Desktop Logo */}
+                        
+                        <h1 className={`text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>
+                          Neuro-Sense
+                        </h1>
+                        <p className={`text-lg md:text-2xl lg:text-3xl font-medium leading-relaxed max-w-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
+                          Understand tone.<br className="md:hidden" /> Reply with confidence.
+                        </p>
+                    </div>
+                    
+                    <button 
+                      onClick={scrollToDecode}
+                      className="w-full md:w-auto md:px-12 py-4 md:py-5 rounded-2xl bg-[#6366F1] hover:bg-[#5558DD] text-white font-bold text-lg md:text-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-3"
+                    >
+                      Get started <ArrowRight size={20} />
+                    </button>
                   </div>
 
-                  <div className="mb-8 w-full flex justify-center transform scale-90">
-                      <PhoneMockupIllustration className="w-64 h-64 drop-shadow-lg" />
+                  {/* Hero Image Side */}
+                  <div className="flex-1 flex justify-center w-full max-w-sm md:max-w-md lg:max-w-lg transform md:scale-110 lg:scale-125">
+                      <PhoneMockupIllustration className="w-full h-auto drop-shadow-2xl" />
                   </div>
-
-                  <button 
-                    onClick={scrollToDecode}
-                    className="w-full py-4 rounded-2xl bg-[#6366F1] hover:bg-[#5558DD] text-white font-bold text-lg shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2"
-                  >
-                    Get started
-                  </button>
                </div>
 
                {/* Separator / Scroll Indicator */}
-               <div className="flex justify-center mb-16 opacity-20">
-                 <div className="w-1 h-8 bg-current rounded-full"></div>
+               <div className="flex justify-center mb-16 opacity-20 hidden md:flex">
+                 <div className="w-1 h-12 bg-current rounded-full animate-bounce"></div>
                </div>
 
                {/* INPUT SECTION ("The second frame") */}
-               <div id="decode-section" ref={decodeSectionRef} className="animate-in fade-in slide-in-from-bottom-8 duration-700 mb-12 scroll-mt-24">
-                  <div className="mb-8">
-                    <h2 className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>Decode Intention</h2>
-                    <p className={`text-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
+               <div id="decode-section" ref={decodeSectionRef} className="animate-in fade-in slide-in-from-bottom-8 duration-700 mb-12 scroll-mt-32 max-w-4xl mx-auto w-full">
+                  <div className="mb-8 md:mb-12 text-center md:text-left">
+                    <h2 className={`text-3xl md:text-5xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>Decode Intention</h2>
+                    <p className={`text-lg md:text-xl ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
                       Paste the confusing text or upload a screenshot.
                     </p>
                   </div>
@@ -252,13 +275,13 @@ const App: React.FC = () => {
 
           {/* VIEW 2: RESULTS */}
           {view === 'results' && (
-            <div className="animate-in fade-in slide-in-from-right-8 duration-500 h-full flex flex-col pt-8">
+            <div className="animate-in fade-in slide-in-from-right-8 duration-500 h-full flex flex-col pt-8 max-w-5xl mx-auto w-full">
                {isAnalyzing ? (
-                 <div className="flex-grow flex flex-col items-center justify-center text-center space-y-6">
-                    <div className="w-20 h-20 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+                 <div className="flex-grow flex flex-col items-center justify-center text-center space-y-8 min-h-[500px]">
+                    <div className="w-24 h-24 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
                     <div>
-                      <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>Analyzing...</h3>
-                      <p className={`mt-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>Reading between the lines</p>
+                      <h3 className={`text-2xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>Analyzing...</h3>
+                      <p className={`mt-3 text-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>Reading between the lines</p>
                     </div>
                  </div>
                ) : (

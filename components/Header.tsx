@@ -47,34 +47,35 @@ const Header: React.FC<HeaderProps> = ({ view, onBack, theme }) => {
   const textSecondary = theme === 'dark' ? 'text-stone-400' : 'text-stone-600';
 
   return (
-    <div className="flex items-center justify-between p-6 mb-2 relative">
-      {/* Back Button (Left) - Only visible in Results view or specific deep views */}
-      <div className="w-20">
+    <div className="flex items-center justify-between p-6 md:p-8 mb-2 relative w-full">
+      {/* Back Button (Left) - Only visible in Results view */}
+      <div className="w-24">
         {view === 'results' && onBack && (
           <button 
             onClick={onBack}
-            className={`p-2 -ml-2 rounded-full transition-colors flex items-center gap-1 ${theme === 'dark' ? 'hover:bg-[#383838] text-stone-300' : 'hover:bg-stone-100 text-stone-600'}`}
+            className={`p-2 -ml-2 rounded-full transition-colors flex items-center gap-1 group ${theme === 'dark' ? 'hover:bg-[#383838] text-stone-300' : 'hover:bg-stone-100 text-stone-600'}`}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform"/>
             <span className="text-sm font-medium">Back</span>
           </button>
         )}
       </div>
       
-      {/* Center Logo (Only Visible when not in hero/home state, or if scrolled down - handled by parent usually, but here checking view) */}
+      {/* Center Logo (Only Visible when not in hero/home state on mobile, but maybe always on desktop scroll? 
+          For now, keeping behavior consistent: fade in when not in initial view state) */}
       <div className={`absolute left-1/2 -translate-x-1/2 transition-opacity duration-300 ${view === 'home' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-         <div className="flex items-center gap-2">
-           <BrainLogo size={28} />
-           <span className={`font-bold text-lg ${textPrimary}`}>Neuro-Sense</span>
+         <div className="flex items-center gap-3">
+           <BrainLogo size={32} />
+           <span className={`font-bold text-xl ${textPrimary}`}>Neuro-Sense</span>
          </div>
       </div>
 
       {/* Right: Auth Buttons */}
-      <div className="flex items-center justify-end gap-2 w-auto">
-         <button className={`text-sm font-semibold px-3 py-2 rounded-lg transition-colors ${textSecondary} hover:text-indigo-500`}>
+      <div className="flex items-center justify-end gap-3 w-auto">
+         <button className={`text-sm md:text-base font-semibold px-4 py-2 rounded-xl transition-colors ${textSecondary} hover:text-indigo-500`}>
            Log in
          </button>
-         <button className={`text-sm font-semibold px-4 py-2 rounded-full transition-colors ${theme === 'dark' ? 'bg-white text-black hover:bg-stone-200' : 'bg-black text-white hover:bg-stone-800'}`}>
+         <button className={`text-sm md:text-base font-semibold px-5 py-2.5 rounded-full transition-colors shadow-sm hover:shadow-md ${theme === 'dark' ? 'bg-white text-black hover:bg-stone-200' : 'bg-black text-white hover:bg-stone-800'}`}>
            Sign up
          </button>
       </div>
