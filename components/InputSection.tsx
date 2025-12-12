@@ -40,6 +40,20 @@ const ACCENTS = [
   "English (Arabic)"
 ];
 
+const ACCENT_LANG_MAP: Record<string, string> = {
+  "American": "en-US",
+  "British": "en-GB",
+  "Australian": "en-AU",
+  "Canadian": "en-CA",
+  "Indian": "en-IN",
+  "Irish": "en-IE",
+  "Scottish": "en-GB", 
+  "South African": "en-ZA",
+  "Neutral": "en-US",
+  "Auto-Detect Accent": "en-US" 
+  // Others default to en-US in logic below
+};
+
 const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, theme }) => {
   const [mode, setMode] = useState<'selection' | 'text' | 'image' | 'audio'>('selection');
   const [text, setText] = useState('');
@@ -158,34 +172,24 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
         
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = 'en-US'; // Default to EN, could map voiceAccent here
+        
+        // Map Accent to Language Code for better recognition
+        const langCode = ACCENT_LANG_MAP[voiceAccent] || 'en-US';
+        recognition.lang = langCode;
 
         baseTextRef.current = text; // Snapshot current text so we append to it
 
         recognition.onresult = (event: any) => {
-          let interimTranscript = '';
-          let finalTranscript = '';
+          let fullSessionTranscript = '';
 
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-              finalTranscript += event.results[i][0].transcript;
-            } else {
-              interimTranscript += event.results[i][0].transcript;
-            }
+          // Reconstruct the full transcript from this session (0 to length)
+          // This avoids complex index tracking and state mutations
+          for (let i = 0; i < event.results.length; ++i) {
+             fullSessionTranscript += event.results[i][0].transcript;
           }
-
-          // Combine the snapshot text + any gathered final transcript + current interim
-          // Note: In a production app, handling the cursor position is complex. 
-          // Here we append to the end for simplicity.
-          const spacing = baseTextRef.current && !baseTextRef.current.endsWith(' ') ? ' ' : '';
-          const newText = baseTextRef.current + spacing + finalTranscript + interimTranscript;
           
-          setText(newText);
-          
-          // If we have final results, update the base so interim calculations are correct next tick
-          if (finalTranscript) {
-            baseTextRef.current += spacing + finalTranscript;
-          }
+          const spacing = baseTextRef.current && !baseTextRef.current.endsWith(' ') && fullSessionTranscript ? ' ' : '';
+          setText(baseTextRef.current + spacing + fullSessionTranscript);
         };
 
         recognition.onerror = (event: any) => {
@@ -408,10 +412,11 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
             {isRecording ? (
               <button 
                 onClick={stopRecording}
-                className="p-4 rounded-full bg-red-500 text-white animate-pulse shadow-lg hover:bg-red-600 transition-colors"
+                className="p-4 rounded-full bg-red-500 text-white animate-pulse shadow-lg hover:bg-red-600 transition-colors flex flex-col items-center justify-center gap-1 min-w-[80px]"
                 title="Stop Recording"
               >
                 <StopCircle size={28} />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Listening</span>
               </button>
             ) : (
               <button 

@@ -11,9 +11,10 @@ interface RightDecoderProps {
   result: AnalysisResult | null;
   onSaveMemory: () => void;
   t: any;
+  theme: 'light' | 'dark';
 }
 
-const RightDecoder: React.FC<RightDecoderProps> = ({ onAnalyze, isAnalyzing, result, onSaveMemory, t }) => {
+const RightDecoder: React.FC<RightDecoderProps> = ({ onAnalyze, isAnalyzing, result, onSaveMemory, t, theme }) => {
   const [inputText, setInputText] = useState('');
   
   // Quick Actions
@@ -57,7 +58,7 @@ const RightDecoder: React.FC<RightDecoderProps> = ({ onAnalyze, isAnalyzing, res
            </div>
         ) : result ? (
            <div className="animate-in fade-in slide-in-from-bottom-4">
-             <AnalysisDashboard result={result} onSave={onSaveMemory} t={t} compact={true} />
+             <AnalysisDashboard result={result} onSave={onSaveMemory} t={t} compact={true} theme={theme} />
              <button 
                onClick={() => { /* Reset logic handled by parent or just overwrite */ setInputText('') }} 
                className="w-full mt-4 py-2 text-xs text-stone-400 hover:text-stone-600 underline"
