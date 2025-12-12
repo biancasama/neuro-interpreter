@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { AnalysisResult, RiskLevel } from '../types';
-import { Copy, Check, Mic, ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
+import { Copy, Check, Mic, ShieldCheck, AlertTriangle, Zap, Sparkles, Loader2 } from 'lucide-react';
 
 interface Props {
   result: AnalysisResult | null;
@@ -13,6 +13,9 @@ interface Props {
 
 const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact, t }) => {
   if (!result) return null;
+
+  const [moreRepliesOpen, setMoreRepliesOpen] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const textPrimary = theme === 'dark' ? 'text-white' : 'text-stone-900';
   const textSecondary = theme === 'dark' ? 'text-stone-400' : 'text-stone-500';
@@ -58,6 +61,20 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact, t }) => {
   };
 
   const vibe = getVibeConfig(result.riskLevel);
+
+  const handleToggleMore = () => {
+    if (moreRepliesOpen) {
+      setMoreRepliesOpen(false);
+      return;
+    }
+    
+    setIsLoadingMore(true);
+    // Simulate "thinking" time
+    setTimeout(() => {
+      setIsLoadingMore(false);
+      setMoreRepliesOpen(true);
+    }, 1200);
+  };
 
   return (
     <div className="space-y-12 pb-12">
@@ -139,12 +156,49 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact, t }) => {
         {/* "Generate replies" Toggle Section */}
         <div className="mt-10 max-w-lg">
            <h3 className={`text-sm font-semibold mb-3 ${textSecondary}`}>Actions</h3>
-           <div className={`p-5 rounded-2xl flex items-center justify-between cursor-pointer hover:bg-opacity-80 transition-all ${cardBg} border ${borderCol}`}>
+           <div 
+             onClick={handleToggleMore}
+             className={`p-5 rounded-2xl flex items-center justify-between cursor-pointer hover:bg-opacity-80 transition-all ${cardBg} border ${borderCol}`}
+           >
               <span className={`font-medium text-lg ${textPrimary}`}>Suggest more replies</span>
-              <div className={`w-14 h-7 rounded-full relative ${theme === 'dark' ? 'bg-indigo-500/30' : 'bg-indigo-100'}`}>
-                <div className="absolute right-1 top-1 w-5 h-5 bg-indigo-500 rounded-full shadow-sm"></div>
+              <div className={`w-14 h-7 rounded-full relative transition-colors duration-300 ${moreRepliesOpen || isLoadingMore ? 'bg-indigo-500' : (theme === 'dark' ? 'bg-indigo-500/30' : 'bg-indigo-100')}`}>
+                <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-all duration-300 ${moreRepliesOpen || isLoadingMore ? 'right-1' : 'left-1'}`}></div>
               </div>
            </div>
+           
+           {/* Loading State */}
+           {isLoadingMore && (
+              <div className="mt-8 flex flex-col items-center justify-center gap-2 animate-in fade-in slide-in-from-top-2">
+                 <Loader2 size={24} className="animate-spin text-indigo-500" />
+                 <p className="text-sm font-medium text-indigo-500">Drafting alternate options...</p>
+              </div>
+           )}
+
+           {/* Additional Replies */}
+           {moreRepliesOpen && !isLoadingMore && (
+              <div className="mt-6 space-y-6 md:grid md:grid-cols-1 md:gap-6 md:space-y-0 animate-in fade-in slide-in-from-top-4 duration-500">
+                 <div className="md:col-span-1 pt-4 border-t border-dashed border-stone-200">
+                   <p className={`text-xs font-bold uppercase tracking-wide mb-4 ${textSecondary}`}>Additional Options</p>
+                   <div className="space-y-4">
+                     <ReplyCard 
+                       text="I need a little time to process this properly." 
+                       label="Neutral, Pause" 
+                       theme={theme} 
+                     />
+                     <ReplyCard 
+                       text="Can you clarify what you mean by that?" 
+                       label="Curious, Clarifying" 
+                       theme={theme} 
+                     />
+                     <ReplyCard 
+                       text="Thanks for letting me know." 
+                       label="Brief, Acknowledgment" 
+                       theme={theme} 
+                     />
+                   </div>
+                 </div>
+              </div>
+           )}
         </div>
       </div>
 

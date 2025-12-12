@@ -16,8 +16,8 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
   const [mode, setMode] = useState<'selection' | 'text' | 'image' | 'audio'>('selection');
   const [text, setText] = useState('');
   
-  // Deep Thinking Mode
-  const [useThinking, setUseThinking] = useState(false);
+  // Deep Context Mode (Gemini 3 Pro)
+  const [useDeepContext, setUseDeepContext] = useState(false);
   
   // File State
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -163,33 +163,33 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
       });
     }
 
-    onAnalyze(text, useThinking, imgBase64, imgMimeType, audioBase64, audioMimeType, voiceAccent);
+    onAnalyze(text, useDeepContext, imgBase64, imgMimeType, audioBase64, audioMimeType, voiceAccent);
   };
 
-  // Thinking Mode Toggle Component
-  const ThinkingToggle = () => (
+  // Deep Context Toggle Component
+  const DeepContextToggle = () => (
     <div 
-      onClick={() => setUseThinking(!useThinking)}
+      onClick={() => setUseDeepContext(!useDeepContext)}
       className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border ${
-        useThinking 
+        useDeepContext 
           ? (theme === 'dark' ? 'bg-indigo-900/20 border-indigo-500/50' : 'bg-indigo-50 border-indigo-200')
           : (theme === 'dark' ? 'bg-[#383838] border-transparent' : 'bg-white border-stone-200')
       } mb-6`}
     >
        <div className={`p-2 rounded-full transition-colors ${
-         useThinking ? 'bg-indigo-500 text-white' : 'bg-stone-200 text-stone-500'
+         useDeepContext ? 'bg-indigo-500 text-white' : 'bg-stone-200 text-stone-500'
        }`}>
          <BrainCircuit size={18} />
        </div>
        <div className="flex flex-col">
-         <span className={`text-sm font-bold ${textPrimary}`}>Thinking Mode</span>
-         <span className="text-xs text-stone-500">Deep analysis for complex nuance (Slower)</span>
+         <span className={`text-sm font-bold ${textPrimary}`}>Deep Context (Gemini 3 Pro)</span>
+         <span className="text-xs text-stone-500">Enhanced reasoning for complex social cues</span>
        </div>
        <div className={`ml-auto w-10 h-6 rounded-full relative transition-colors ${
-          useThinking ? 'bg-indigo-500' : 'bg-stone-300'
+          useDeepContext ? 'bg-indigo-500' : 'bg-stone-300'
        }`}>
          <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${
-           useThinking ? 'right-1' : 'left-1'
+           useDeepContext ? 'right-1' : 'left-1'
          }`}></div>
        </div>
     </div>
@@ -328,7 +328,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
           </div>
         </div>
 
-        <ThinkingToggle />
+        <DeepContextToggle />
 
         <div className="flex gap-4">
           <button 
@@ -363,7 +363,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
           </button>
         </div>
         
-        <ThinkingToggle />
+        <DeepContextToggle />
 
         <button
           onClick={handleSubmit}
@@ -400,7 +400,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
              </div>
          </div>
 
-         <ThinkingToggle />
+         <DeepContextToggle />
 
          <div className="flex gap-4">
           <button 
