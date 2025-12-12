@@ -8,6 +8,7 @@ import { translations } from './utils/translations';
 import { Moon, Sun, ArrowRight, Youtube, Instagram, Twitter, Music, MessageCircle } from 'lucide-react';
 import { PhoneMockupIllustration } from './components/Illustrations';
 import BodyDoubleAvatar from './components/BodyDoubleAvatar';
+import PanicButton from './components/PanicButton';
 
 // Footer Component tailored for the App Card
 const Footer = ({ theme, t, sensorySafe }: { theme: 'light' | 'dark', t: any, sensorySafe: boolean }) => {
@@ -513,12 +514,17 @@ const App: React.FC = () => {
 
         </div>
         
-        {/* Co-Pilot Body Double Avatar (Bottom Left) */}
-        {!accessibility.sensorySafe && (
-          <BodyDoubleAvatar theme={theme} enabled={accessibility.coPilot} />
-        )}
-
       </div>
+
+      {/* FIXED ELEMENTS MOVED OUTSIDE OF OVERFLOW-HIDDEN CARD */}
+      {/* Co-Pilot Body Double Avatar (Bottom Left) */}
+      {!accessibility.sensorySafe && (
+        <BodyDoubleAvatar theme={theme} enabled={accessibility.coPilot} />
+      )}
+      
+      {/* Panic Button (Bottom Right) */}
+      <PanicButton t={t} />
+
     </div>
   );
 };
