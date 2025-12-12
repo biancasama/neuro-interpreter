@@ -59,6 +59,26 @@ const analysisSchema: Schema = {
   required: ["riskLevel", "confidenceScore", "literalMeaning", "emotionalSubtext", "vocalTone", "suggestedResponse", "idiomsAndSarcasm"]
 };
 
+const refinementSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    rewrittenText: {
+      type: Type.STRING,
+      description: "The rewritten message matching the target tone and culture."
+    },
+    bluntnessAlert: {
+      type: Type.STRING,
+      description: "If the ORIGINAL text was rude, blunt, or aggressive, provide a gentle warning explaining why. If safe, return null.",
+      nullable: true
+    },
+    explanation: {
+      type: Type.STRING,
+      description: "Brief explanation of changes made (e.g. 'Added softeners', 'Used honorifics')."
+    }
+  },
+  required: ["rewrittenText", "explanation"]
+};
+
 export const transcribeAudio = async (
   audioBase64: string, 
   mimeType: string, 
@@ -230,6 +250,65 @@ export const analyzeMessageContext = async (
     }
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
+    throw error;
+  }
+};
+
+// New function for Message Refinement (Tone Check)
+export const refineMessage = async (
+  draftText: string,
+  toneValue: number, // 0-100
+  culturalContext: string
+): Promise<{ rewrittenText: string; bluntnessAlert: string | null; explanation: string }> => {
+  
+  if (!process.env.API_KEY) {
+    throw new Error("API Key is missing.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+  // Map slider value to descriptive tone
+  let targetTone = "";
+  if (toneValue < 33) targetTone = "Direct, Concise, Neutral (Low Context)";
+  else if (toneValue < 66) targetTone = "Warm, Friendly, Empathetic (Softened)";
+  else targetTone = "Formal, Professional, Polite (High Respect)";
+
+  const prompt = `
+    You are a communication coach assisting a neurodivergent user.
+    
+    TASK:
+    1. Analyze the INPUT DRAFT for unintentional rudeness, bluntness, or aggression.
+    2. Rewrite the draft to match the TARGET TONE and CULTURAL CONTEXT.
+    
+    INPUT DRAFT: "${draftText}"
+    TARGET TONE: ${targetTone}
+    RECIPIENT CULTURE/CONTEXT: ${culturalContext}
+
+    BLUNTNESS CHECK:
+    If the original draft sounds angry, demanding, or too direct for a general social situation, provide a "Bluntness Alert". 
+    Example: "This might sound demanding." or "This could be read as angry."
+    If it is fine, set bluntnessAlert to null.
+
+    OUTPUT FORMAT: JSON matching the schema.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: refinementSchema
+      }
+    });
+
+    if (response.text) {
+      return JSON.parse(response.text);
+    } else {
+      throw new Error("Empty response from AI");
+    }
+  } catch (error) {
+    console.error("Refinement Error:", error);
     throw error;
   }
 };
