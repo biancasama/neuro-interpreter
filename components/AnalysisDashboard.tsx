@@ -183,17 +183,20 @@ const AnalysisDashboard: React.FC<Props> = ({ result, theme, compact, t }) => {
                      <ReplyCard 
                        text="I need a little time to process this properly." 
                        label="Neutral, Pause" 
-                       theme={theme} 
+                       theme={theme}
+                       compact={true}
                      />
                      <ReplyCard 
                        text="Can you clarify what you mean by that?" 
                        label="Curious, Clarifying" 
-                       theme={theme} 
+                       theme={theme}
+                       compact={true} 
                      />
                      <ReplyCard 
                        text="Thanks for letting me know." 
                        label="Brief, Acknowledgment" 
-                       theme={theme} 
+                       theme={theme}
+                       compact={true} 
                      />
                    </div>
                  </div>
@@ -238,9 +241,10 @@ interface ReplyCardProps {
   text: string;
   label: string;
   theme: 'light' | 'dark';
+  compact?: boolean;
 }
 
-const ReplyCard: React.FC<ReplyCardProps> = ({ text, label, theme }) => {
+const ReplyCard: React.FC<ReplyCardProps> = ({ text, label, theme, compact }) => {
   const [copied, setCopied] = useState(false);
   
   const cardBg = theme === 'dark' ? 'bg-[#2C2C2C]' : 'bg-white';
@@ -254,8 +258,14 @@ const ReplyCard: React.FC<ReplyCardProps> = ({ text, label, theme }) => {
   };
 
   return (
-    <div className={`p-6 rounded-3xl border ${border} ${cardBg} shadow-sm relative group hover:shadow-md transition-all flex flex-col justify-between h-full`}>
-       <p className={`text-xl font-medium mb-6 pr-4 leading-relaxed ${textPrimary}`}>
+    <div className={`
+      rounded-3xl border ${border} ${cardBg} shadow-sm relative group hover:shadow-md transition-all flex flex-col justify-between
+      ${compact ? 'p-5' : 'p-6 h-full'}
+    `}>
+       <p className={`
+         font-medium pr-4 leading-relaxed ${textPrimary}
+         ${compact ? 'text-lg mb-4' : 'text-xl mb-6'}
+       `}>
          "{text}"
        </p>
        
