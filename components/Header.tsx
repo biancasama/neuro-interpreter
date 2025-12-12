@@ -3,7 +3,7 @@ import React from 'react';
 import { ChevronLeft } from 'lucide-react';
 
 interface HeaderProps {
-  view: 'hero' | 'input' | 'results';
+  view: 'home' | 'results'; // Updated to match App.tsx types
   onBack?: () => void;
   theme: 'light' | 'dark';
 }
@@ -44,31 +44,40 @@ export const BrainLogo = ({ size = 48, className = "" }: { size?: number, classN
 
 const Header: React.FC<HeaderProps> = ({ view, onBack, theme }) => {
   const textPrimary = theme === 'dark' ? 'text-white' : 'text-stone-900';
+  const textSecondary = theme === 'dark' ? 'text-stone-400' : 'text-stone-600';
 
   return (
     <div className="flex items-center justify-between p-6 mb-2 relative">
-      {/* Back Button (Left) */}
-      <div className="w-12">
-        {view !== 'hero' && onBack && (
+      {/* Back Button (Left) - Only visible in Results view or specific deep views */}
+      <div className="w-20">
+        {view === 'results' && onBack && (
           <button 
             onClick={onBack}
-            className={`p-2 -ml-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-[#383838] text-stone-300' : 'hover:bg-stone-100 text-stone-600'}`}
+            className={`p-2 -ml-2 rounded-full transition-colors flex items-center gap-1 ${theme === 'dark' ? 'hover:bg-[#383838] text-stone-300' : 'hover:bg-stone-100 text-stone-600'}`}
           >
-            <ChevronLeft size={28} />
+            <ChevronLeft size={24} />
+            <span className="text-sm font-medium">Back</span>
           </button>
         )}
       </div>
       
-      {/* Center Logo (Always Visible slightly smaller in header) */}
-      <div className={`absolute left-1/2 -translate-x-1/2 transition-opacity duration-300 ${view === 'hero' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      {/* Center Logo (Only Visible when not in hero/home state, or if scrolled down - handled by parent usually, but here checking view) */}
+      <div className={`absolute left-1/2 -translate-x-1/2 transition-opacity duration-300 ${view === 'home' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
          <div className="flex items-center gap-2">
-           <BrainLogo size={32} />
+           <BrainLogo size={28} />
            <span className={`font-bold text-lg ${textPrimary}`}>Neuro-Sense</span>
          </div>
       </div>
 
-      {/* Right Spacer */}
-      <div className="w-12"></div>
+      {/* Right: Auth Buttons */}
+      <div className="flex items-center justify-end gap-2 w-auto">
+         <button className={`text-sm font-semibold px-3 py-2 rounded-lg transition-colors ${textSecondary} hover:text-indigo-500`}>
+           Log in
+         </button>
+         <button className={`text-sm font-semibold px-4 py-2 rounded-full transition-colors ${theme === 'dark' ? 'bg-white text-black hover:bg-stone-200' : 'bg-black text-white hover:bg-stone-800'}`}>
+           Sign up
+         </button>
+      </div>
     </div>
   );
 };
