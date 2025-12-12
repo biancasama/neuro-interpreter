@@ -9,7 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* --- Reset & Base --- */
+        /* CSS Variables for consistent theming */
+        :root {
+            --color-bg: #fafaf9; /* Stone 50 */
+            --color-text-main: #1c1917; /* Stone 900 */
+            --color-text-muted: #57534e; /* Stone 600 */
+            --color-accent: #4f46e5; /* Indigo 600 */
+            --font-main: 'Inter', sans-serif;
+            --transition-speed: 0.8s;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -17,13 +26,13 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            color: #1c1917; /* Stone 900 */
-            background-color: #fafaf9; /* Stone 50 */
-            overflow: hidden; /* Prevent body scroll, handle inside container */
+            font-family: var(--font-main);
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            overflow: hidden; /* Hide main scrollbar, container handles it */
         }
 
-        /* --- Scroll Snap Container --- */
+        /* Scroll Snap Container */
         .scrolly-container {
             height: 100vh;
             width: 100vw;
@@ -32,325 +41,313 @@
             scroll-behavior: smooth;
         }
 
-        /* --- Section Common Styles --- */
+        /* Section Styling */
         section {
             height: 100vh;
             width: 100%;
             scroll-snap-align: start;
             scroll-snap-stop: always;
-            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 2rem;
+            position: relative;
             overflow: hidden;
         }
 
-        .content-wrapper {
-            max-width: 1200px;
-            width: 100%;
+        /* Layout Grid */
+        .grid-layout {
             display: grid;
             grid-template-columns: 1fr;
             gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
             align-items: center;
         }
 
         @media (min-width: 768px) {
-            .content-wrapper {
+            .grid-layout {
                 grid-template-columns: 1fr 1fr;
-                gap: 4rem;
+                gap: 5rem;
             }
         }
 
-        /* --- Typography --- */
+        /* Text Styling */
         h1 {
             font-size: 3rem;
             font-weight: 800;
             line-height: 1.1;
-            margin-bottom: 1rem;
-            color: #292524; /* Stone 800 */
-            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
         }
 
         h2 {
             font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: #292524;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
         }
 
         h3 {
-            font-size: 1rem;
+            font-size: 0.875rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: #4f46e5; /* Indigo 600 */
+            color: var(--color-accent);
             margin-bottom: 0.5rem;
             font-weight: 600;
         }
 
         p {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             line-height: 1.6;
-            color: #57534e; /* Stone 600 */
-            font-weight: 300;
+            color: var(--color-text-muted);
+            max-width: 50ch;
         }
 
-        /* --- Components --- */
-        .btn-primary {
+        @media (min-width: 768px) {
+            h1 { font-size: 4.5rem; }
+            h2 { font-size: 3rem; }
+            p { font-size: 1.25rem; }
+        }
+
+        /* Button */
+        .btn {
             display: inline-block;
             margin-top: 2rem;
-            padding: 1rem 2rem;
-            background-color: #4f46e5;
+            padding: 1rem 2.5rem;
+            background-color: var(--color-accent);
             color: white;
             text-decoration: none;
-            border-radius: 99px;
+            border-radius: 9999px;
             font-weight: 600;
-            font-size: 1.125rem;
-            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .btn-primary:hover {
-            background-color: #4338ca;
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
         }
 
-        .image-container {
+        /* Image Container */
+        .image-wrapper {
             width: 100%;
-            height: auto;
-            border-radius: 24px;
+            border-radius: 1.5rem;
             overflow: hidden;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
             background: white;
-            border: 1px solid #e7e5e4;
+            border: 1px solid rgba(0,0,0,0.05);
+            transform: perspective(1000px) rotateY(0deg);
+            transition: transform var(--transition-speed) ease-out;
         }
 
-        img {
+        .image-wrapper img {
             width: 100%;
             height: auto;
             display: block;
-            object-fit: cover;
         }
 
-        .scroll-indicator {
+        /* Intro & Outro Centering */
+        .center-text {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .scroll-down {
             position: absolute;
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%);
             animation: bounce 2s infinite;
-            opacity: 0.5;
+            color: var(--color-text-muted);
         }
 
-        /* --- Layout Variations --- */
-        .layout-intro, .layout-outro {
-            text-align: center;
-        }
-        
-        .layout-intro .content-wrapper, .layout-outro .content-wrapper {
-            grid-template-columns: 1fr;
-            max-width: 800px;
-        }
-
-        /* Alternating Order for Desktop */
-        @media (min-width: 768px) {
-            .layout-left-text .text-col { order: 1; }
-            .layout-left-text .img-col { order: 2; }
-
-            .layout-right-text .text-col { order: 2; }
-            .layout-right-text .img-col { order: 1; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+            40% {transform: translateX(-50%) translateY(-10px);}
+            60% {transform: translateX(-50%) translateY(-5px);}
         }
 
         /* --- Animations --- */
-        /* Initial States */
         .anim-text {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(40px);
+            transition: opacity var(--transition-speed) ease-out, transform var(--transition-speed) ease-out;
         }
 
         .anim-image {
             opacity: 0;
-            transition: opacity 1s ease-out, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: translateX(60px); /* Default slide from right */
+            transition: opacity var(--transition-speed) ease-out, transform var(--transition-speed) ease-out;
         }
 
-        /* Directional Initial States for Images */
-        .layout-left-text .anim-image { transform: translateX(50px) scale(0.95); }
-        .layout-right-text .anim-image { transform: translateX(-50px) scale(0.95); }
-        .layout-intro .anim-image, .layout-outro .anim-image { transform: scale(0.9); }
+        /* Alternating slide directions */
+        .layout-alt .anim-image {
+            transform: translateX(-60px); /* Slide from left */
+        }
 
-        /* Active States (Triggered by JS) */
-        section.in-view .anim-text {
+        /* Active State Classes */
+        .in-view .anim-text {
             opacity: 1;
             transform: translateY(0);
         }
 
-        section.in-view .anim-image {
+        .in-view .anim-image {
             opacity: 1;
-            transform: translateX(0) scale(1);
+            transform: translateX(0);
         }
 
-        /* Delays for Staggered Effect */
+        /* Order classes for alternating layout */
+        .order-normal .text-col { order: 1; }
+        .order-normal .img-col { order: 2; }
+        
+        @media (min-width: 768px) {
+            .order-alt .text-col { order: 2; }
+            .order-alt .img-col { order: 1; }
+        }
+
         .delay-100 { transition-delay: 0.1s; }
         .delay-200 { transition-delay: 0.2s; }
-        .delay-300 { transition-delay: 0.3s; }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
-            40% {transform: translateY(-10px) translateX(-50%);}
-            60% {transform: translateY(-5px) translateX(-50%);}
-        }
     </style>
 </head>
 <body>
 
-    <div class="scrolly-container">
+    <main class="scrolly-container">
 
         <!-- INTRO -->
-        <section class="layout-intro" id="intro">
-            <div class="content-wrapper">
-                <div class="text-col">
-                    <h1 class="anim-text">How Neuro-Sense Helps You<br><span style="color: #4f46e5;">Decode the Unsaid</span></h1>
-                    <p class="anim-text delay-200">Your social co-pilot for the tricky moments.</p>
+        <section id="intro">
+            <div class="grid-layout center-text">
+                <div>
+                    <h1 class="anim-text">How Neuro-Sense Helps You <br><span style="color: var(--color-accent);">Decode the Unsaid</span></h1>
+                    <p class="anim-text delay-100">Your social co-pilot for the tricky moments.</p>
                 </div>
             </div>
-            <div class="scroll-indicator">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+            <div class="scroll-down">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
             </div>
         </section>
 
         <!-- STEP 1: Text Left, Image Right -->
-        <section class="layout-left-text" id="step1">
-            <div class="content-wrapper">
+        <section id="step1" class="order-normal">
+            <div class="grid-layout">
                 <div class="text-col">
                     <h3 class="anim-text">Step 01</h3>
                     <h2 class="anim-text delay-100">The "Wait, What?" Moment</h2>
-                    <p class="anim-text delay-200">
-                        Let’s say you’re in a group chat and a message lands that feels... off. The words say "That's nice", but your gut says sarcasm. Instead of spiraling, you call for backup.
-                    </p>
+                    <p class="anim-text delay-200">Let’s say you’re in a group chat and a message lands that feels... off. The words say "That's nice", but your gut says sarcasm. Instead of spiraling, you call for backup.</p>
                 </div>
-                <div class="img-col anim-image delay-300">
-                    <div class="image-container">
-                        <!-- Placeholder: Image of a confusing WhatsApp/Text message -->
-                        <img src="https://placehold.co/600x400/e0e7ff/4f46e5?text=Confusing+Message+UI" alt="Confusing text message example">
+                <div class="img-col">
+                    <div class="image-wrapper anim-image">
+                        <!-- Screenshot: A confusing message bubble in a chat interface -->
+                        <img src="https://placehold.co/600x400/e0e7ff/4f46e5?text=Step+1:+Confusing+Message" alt="Confusing message example">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- STEP 2: Image Left, Text Right -->
-        <section class="layout-right-text" id="step2">
-            <div class="content-wrapper">
+        <section id="step2" class="order-alt layout-alt">
+            <div class="grid-layout">
                 <div class="text-col">
                     <h3 class="anim-text">Step 02</h3>
                     <h2 class="anim-text delay-100">Instantly Call for Backup</h2>
-                    <p class="anim-text delay-200">
-                        Neuro-Sense lives inside your browser. No switching apps. Just click the confusing message, and the sidebar slides out instantly.
-                    </p>
+                    <p class="anim-text delay-200">Neuro-Sense lives inside your browser. No switching apps. Just click the confusing message, and the sidebar slides out instantly.</p>
                 </div>
-                <div class="img-col anim-image delay-300">
-                    <div class="image-container">
-                        <!-- Placeholder: Image of the 'Brain Button' being clicked or Sidebar opening -->
-                        <img src="https://placehold.co/600x400/f3e8ff/9333ea?text=Sidebar+Opening" alt="Sidebar animation">
+                <div class="img-col">
+                    <div class="image-wrapper anim-image">
+                        <!-- Screenshot: Mouse hovering a message, sidebar appearing -->
+                        <img src="https://placehold.co/600x400/f3e8ff/9333ea?text=Step+2:+Sidebar+Activation" alt="Sidebar activation">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- STEP 3: Text Left, Image Right -->
-        <section class="layout-left-text" id="step3">
-            <div class="content-wrapper">
+        <section id="step3" class="order-normal">
+            <div class="grid-layout">
                 <div class="text-col">
                     <h3 class="anim-text">Step 03</h3>
                     <h2 class="anim-text delay-100">Get a Quick "Vibe Check"</h2>
-                    <p class="anim-text delay-200">
-                        First, you get a high-level signal. Our "Traffic Light" system (Safe / Caution / Conflict) gives you an immediate read on the emotional temperature.
-                    </p>
+                    <p class="anim-text delay-200">First, you get a high-level signal. Our "Traffic Light" system (Safe/Caution/Conflict) gives you an immediate read on the emotional temperature.</p>
                 </div>
-                <div class="img-col anim-image delay-300">
-                    <div class="image-container">
-                        <!-- Placeholder: Image of the Traffic Light UI Component -->
-                        <img src="https://placehold.co/600x400/ecfdf5/059669?text=Traffic+Light+Analysis" alt="Vibe check UI">
+                <div class="img-col">
+                    <div class="image-wrapper anim-image">
+                        <!-- Screenshot: Traffic light UI component showing 'Caution' -->
+                        <img src="https://placehold.co/600x400/ecfdf5/059669?text=Step+3:+Traffic+Light+Analysis" alt="Vibe check analysis">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- STEP 4: Image Left, Text Right -->
-        <section class="layout-right-text" id="step4">
-            <div class="content-wrapper">
+        <section id="step4" class="order-alt layout-alt">
+            <div class="grid-layout">
                 <div class="text-col">
                     <h3 class="anim-text">Step 04</h3>
                     <h2 class="anim-text delay-100">Understand the Subtext</h2>
-                    <p class="anim-text delay-200">
-                        We don't just label it; we explain it. Neuro-Sense breaks down the phrasing and punctuation to reveal the hidden meaning literal text-to-speech misses.
-                    </p>
+                    <p class="anim-text delay-200">We don't just label it; we explain it. Neuro-Sense breaks down the phrasing and punctuation to reveal the hidden meaning literal text-to-speech misses.</p>
                 </div>
-                <div class="img-col anim-image delay-300">
-                    <div class="image-container">
-                        <!-- Placeholder: Image of the 'Emotional Subtext' card details -->
-                        <img src="https://placehold.co/600x400/fff7ed/ea580c?text=Subtext+Explanation" alt="Detailed subtext view">
+                <div class="img-col">
+                    <div class="image-wrapper anim-image">
+                        <!-- Screenshot: The 'Subtext' analysis card detail -->
+                        <img src="https://placehold.co/600x400/fff7ed/ea580c?text=Step+4:+Subtext+Explanation" alt="Subtext explanation">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- STEP 5: Text Left, Image Right -->
-        <section class="layout-left-text" id="step5">
-            <div class="content-wrapper">
+        <section id="step5" class="order-normal">
+            <div class="grid-layout">
                 <div class="text-col">
                     <h3 class="anim-text">Step 05</h3>
                     <h2 class="anim-text delay-100">Craft the Perfect Reply</h2>
-                    <p class="anim-text delay-200">
-                        Knowing is half the battle. Use the "Gemini Copilot" to draft a response that de-escalates tension. Review, click "Copy to Chat", and hit send.
-                    </p>
+                    <p class="anim-text delay-200">Knowing is half the battle. Use the "Gemini Copilot" to draft a response that de-escalates tension. Review, click "Copy to Chat", and hit send.</p>
                 </div>
-                <div class="img-col anim-image delay-300">
-                    <div class="image-container">
-                        <!-- Placeholder: Image of suggested replies and draft input -->
-                        <img src="https://placehold.co/600x400/eff6ff/2563eb?text=Drafting+Copilot" alt="Reply drafting tool">
+                <div class="img-col">
+                    <div class="image-wrapper anim-image">
+                        <!-- Screenshot: Suggested replies and copilot drafting -->
+                        <img src="https://placehold.co/600x400/eff6ff/2563eb?text=Step+5:+Gemini+Copilot" alt="Reply drafting">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- OUTRO -->
-        <section class="layout-outro" id="outro">
-            <div class="content-wrapper">
-                <div class="text-col">
+        <section id="outro">
+            <div class="grid-layout center-text">
+                <div>
                     <h2 class="anim-text">No more guessing games.</h2>
-                    <p class="anim-text delay-100" style="margin-bottom: 2rem;">Bring clarity to your digital conversations today.</p>
-                    <div class="anim-text delay-200">
-                        <a href="/" class="btn-primary">Get Started Now</a>
-                    </div>
+                    <a href="/" class="btn anim-text delay-100">Get Started Now</a>
                 </div>
             </div>
         </section>
 
-    </div>
+    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const observerOptions = {
                 root: document.querySelector('.scrolly-container'),
-                threshold: 0.5 // Trigger when 50% of the section is visible
+                threshold: 0.4
             };
 
-            const observerCallback = (entries) => {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('in-view');
                     } else {
-                        // Optional: Remove class to re-animate on scroll back
+                        // Optional: Remove class to replay animation on scroll up
                         entry.target.classList.remove('in-view');
                     }
                 });
-            };
+            }, observerOptions);
 
-            const observer = new IntersectionObserver(observerCallback, observerOptions);
-            const sections = document.querySelectorAll('section');
-            sections.forEach(section => observer.observe(section));
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
         });
     </script>
 </body>
 </html>
+    
