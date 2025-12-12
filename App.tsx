@@ -10,7 +10,7 @@ import { Moon, Sun, ArrowRight, Youtube, Instagram, Twitter, MessageCircle, Musi
 import { PhoneMockupIllustration } from './components/Illustrations';
 
 // Footer Component tailored for the App Card
-const Footer = ({ theme }: { theme: 'light' | 'dark' }) => {
+const Footer = ({ theme, t }: { theme: 'light' | 'dark', t: any }) => {
   const textPrimary = theme === 'dark' ? 'text-white' : 'text-stone-900';
   const textSecondary = theme === 'dark' ? 'text-stone-400' : 'text-stone-500';
   const borderCol = theme === 'dark' ? 'border-white/10' : 'border-stone-200';
@@ -32,7 +32,11 @@ const Footer = ({ theme }: { theme: 'light' | 'dark' }) => {
                      <span className={`font-bold text-xl md:text-2xl ${textPrimary}`}>Neuro-Sense</span>
                    </div>
                    <p className={`text-sm ${textSecondary} mb-6 leading-relaxed`}>
-                     Context decoder. Understand tone.<br />Reply with confidence.
+                     {t.heroSubtitle.split('. ').map((sent: string, i: number) => (
+                       <React.Fragment key={i}>
+                         {sent}{i < 2 ? '. ' : ''}{i === 1 && <br/>}
+                       </React.Fragment>
+                     ))}
                    </p>
                    
                    <div className={`flex items-center gap-4 ${textSecondary}`}>
@@ -48,32 +52,32 @@ const Footer = ({ theme }: { theme: 'light' | 'dark' }) => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-8 md:gap-x-24">
                {/* Column 1 */}
                <div>
-                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>Use Cases</h4>
+                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>{t.footerUseCases}</h4>
                  <ul className={`space-y-3 text-sm ${textSecondary}`}>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Social Context</a></li>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Emotional Safety</a></li>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Clarity & Focus</a></li>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Conflict Resolution</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerSocialContext}</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerEmotionalSafety}</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerClarity}</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerConflict}</a></li>
                  </ul>
                </div>
 
                {/* Column 2 */}
                <div>
-                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>Company</h4>
+                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>{t.footerCompany}</h4>
                  <ul className={`space-y-3 text-sm ${textSecondary}`}>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Careers</a></li>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Blog</a></li>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Influencer program</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerCareers}</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerBlog}</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerInfluencer}</a></li>
                  </ul>
                </div>
 
                {/* Column 3 */}
                <div className="col-span-2 md:col-span-1">
-                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>Legal</h4>
+                 <h4 className={`font-bold text-base mb-4 ${textPrimary}`}>{t.footerLegal}</h4>
                  <ul className={`space-y-3 text-sm ${textSecondary} flex flex-col`}>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Terms of Service</a></li>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Privacy Policy</a></li>
-                   <li><a href="#" className="hover:text-indigo-500 transition-colors">Refund Policy</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerTerms}</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerPrivacy}</a></li>
+                   <li><a href="#" className="hover:text-indigo-500 transition-colors">{t.footerRefund}</a></li>
                  </ul>
                </div>
             </div>
@@ -84,7 +88,7 @@ const Footer = ({ theme }: { theme: 'light' | 'dark' }) => {
 
         {/* Bottom Section */}
         <div className={`text-sm ${textSecondary} text-center md:text-left`}>
-           Copyright © 2025 Neuro-Sense, Inc. All rights reserved.
+           {t.footerRights}
         </div>
 
       </div>
@@ -130,10 +134,17 @@ const App: React.FC = () => {
     setView('results');
 
     try {
+      // Map short codes to full language names if needed by Gemini, or just pass the code
+      // We'll pass English explicitly as 'English' in logic for now, or use mapped name
+      const langNameMap: Record<Language, string> = {
+          en: 'English', es: 'Spanish', fr: 'French', de: 'German', 
+          it: 'Italian', pt: 'Portuguese', ja: 'Japanese'
+      };
+      
       const data = await analyzeMessageContext(
         text, 
         useDeepContext, 
-        'English', 
+        langNameMap[language], 
         imageBase64, 
         imageMimeType,
         audioBase64, 
@@ -170,8 +181,6 @@ const App: React.FC = () => {
   `;
 
   // Responsive Card Classes
-  // Mobile: max-w-md, rounded-[2.5rem], fixedish height
-  // Desktop: max-w-7xl, rounded-[3rem], auto height, generous padding
   const cardClass = `
     w-full relative flex flex-col shadow-2xl transition-all duration-500 overflow-hidden
     ${theme === 'dark' ? 'bg-[#1E1E1E] shadow-black/40' : 'bg-white shadow-stone-200'}
@@ -197,12 +206,14 @@ const App: React.FC = () => {
       {/* Main App Card */}
       <div className={cardClass}>
         
-        {/* Header - Fixed at top relative to card on mobile, normal flow on desktop often better but let's keep sticky-ish feel */}
+        {/* Header */}
         <div className="flex-none z-10 bg-inherit border-b border-transparent">
            <Header 
             view={view} 
             onBack={view === 'results' ? handleReset : undefined}
             theme={theme}
+            language={language}
+            onLanguageChange={setLanguage}
           />
         </div>
 
@@ -226,7 +237,11 @@ const App: React.FC = () => {
                           Neuro-Sense
                         </h1>
                         <p className={`text-lg md:text-2xl lg:text-3xl font-medium leading-relaxed max-w-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
-                          Context decoder. Understand tone.<br />Reply with confidence.
+                          {t.heroSubtitle.split('. ').map((sent: string, i: number) => (
+                             <React.Fragment key={i}>
+                               {sent}{i < 2 ? '. ' : ''}{i === 1 && <br/>}
+                             </React.Fragment>
+                          ))}
                         </p>
                     </div>
                     
@@ -234,7 +249,7 @@ const App: React.FC = () => {
                       onClick={scrollToDecode}
                       className="w-full md:w-auto md:px-12 py-4 md:py-5 rounded-2xl bg-[#6366F1] hover:bg-[#5558DD] text-white font-bold text-lg md:text-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-3"
                     >
-                      Get started <ArrowRight size={20} />
+                      {t.getStarted} <ArrowRight size={20} />
                     </button>
                   </div>
 
@@ -249,12 +264,12 @@ const App: React.FC = () => {
                  <div className="w-1 h-12 bg-current rounded-full animate-bounce"></div>
                </div>
 
-               {/* INPUT SECTION ("The second frame") */}
+               {/* INPUT SECTION */}
                <div id="decode-section" ref={decodeSectionRef} className="animate-in fade-in slide-in-from-bottom-8 duration-700 mb-12 scroll-mt-32 max-w-4xl mx-auto w-full">
                   <div className="mb-8 md:mb-12 text-center md:text-left">
-                    <h2 className={`text-3xl md:text-5xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>Decode Intention</h2>
+                    <h2 className={`text-3xl md:text-5xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{t.decodeTitle}</h2>
                     <p className={`text-lg md:text-xl ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>
-                      Paste the confusing text or upload a screenshot.
+                      {t.decodeDesc}
                     </p>
                   </div>
                   
@@ -267,7 +282,7 @@ const App: React.FC = () => {
                </div>
 
                {/* Footer */}
-               <Footer theme={theme} />
+               <Footer theme={theme} t={t} />
             </div>
           )}
 
@@ -278,8 +293,8 @@ const App: React.FC = () => {
                  <div className="flex-grow flex flex-col items-center justify-center text-center space-y-8 min-h-[500px]">
                     <div className="w-24 h-24 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
                     <div>
-                      <h3 className={`text-2xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>Analyzing...</h3>
-                      <p className={`mt-3 text-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>Reading between the lines</p>
+                      <h3 className={`text-2xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-stone-900'}`}>{t.analyzingTitle}</h3>
+                      <p className={`mt-3 text-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-500'}`}>{t.analyzingDesc}</p>
                     </div>
                  </div>
                ) : (

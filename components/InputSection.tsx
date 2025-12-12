@@ -149,7 +149,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
   if (mode === 'selection') {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4">
-        <p className={`mb-8 ${textSecondary} md:text-lg`}>Let's make sense of this together.</p>
+        <p className={`mb-8 ${textSecondary} md:text-lg`}>{t.letMakeSense}</p>
 
         {/* Responsive Grid for Choices */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -161,8 +161,8 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
               <Upload size={28} />
             </div>
             <div>
-              <span className={`block font-bold text-lg md:text-xl mb-1 ${textPrimary}`}>Upload file</span>
-              <span className={`text-sm md:text-base ${textSecondary}`}>Screenshot or Audio</span>
+              <span className={`block font-bold text-lg md:text-xl mb-1 ${textPrimary}`}>{t.uploadFile}</span>
+              <span className={`text-sm md:text-base ${textSecondary}`}>{t.uploadDesc}</span>
             </div>
           </button>
 
@@ -174,8 +174,8 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
               <FileText size={28} />
             </div>
             <div>
-              <span className={`block font-bold text-lg md:text-xl mb-1 ${textPrimary}`}>Paste chat text</span>
-              <span className={`text-sm md:text-base ${textSecondary}`}>Or use microphone</span>
+              <span className={`block font-bold text-lg md:text-xl mb-1 ${textPrimary}`}>{t.pasteText}</span>
+              <span className={`text-sm md:text-base ${textSecondary}`}>{t.pasteDesc}</span>
             </div>
           </button>
         </div>
@@ -195,7 +195,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
           className={`mt-8 md:mt-10 flex flex-col p-5 rounded-2xl cursor-pointer transition-all ${theme === 'dark' ? 'bg-[#2C2C2C] hover:bg-[#353535]' : 'bg-stone-50 hover:bg-stone-100'} max-w-lg border border-transparent hover:border-indigo-100`}
         >
            <div className="flex items-center justify-between w-full">
-               <span className={`font-medium text-base md:text-lg ${textPrimary}`}>Plain language mode</span>
+               <span className={`font-medium text-base md:text-lg ${textPrimary}`}>{t.plainMode}</span>
                <div className={`w-14 h-7 rounded-full relative transition-colors duration-300 ${plainMode ? 'bg-indigo-500/20' : (theme === 'dark' ? 'bg-stone-700' : 'bg-stone-200')}`}>
                   <div className={`absolute top-1 w-5 h-5 rounded-full shadow-sm transition-all duration-300 ${plainMode ? 'bg-indigo-500 right-1' : 'bg-stone-400 left-1'}`}></div>
                </div>
@@ -207,10 +207,10 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
                  <div className={`p-4 rounded-xl border-2 border-dashed ${theme === 'dark' ? 'border-stone-700 bg-black/20' : 'border-stone-200 bg-white/50'}`}>
                     <div className="flex items-center gap-3 mb-2">
                        <div className={`w-2 h-2 rounded-full ${theme === 'dark' ? 'bg-indigo-400' : 'bg-indigo-500'} animate-pulse`}></div>
-                       <span className={`text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-stone-500' : 'text-stone-400'}`}>Preview</span>
+                       <span className={`text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-stone-500' : 'text-stone-400'}`}>{t.previewLabel}</span>
                     </div>
                     <p className={`text-sm ${textSecondary} leading-relaxed`}>
-                       The analysis will be stripped of jargon and complex phrasing. <span className="opacity-50">Clear. Concise. Direct.</span>
+                       {t.previewDesc}
                     </p>
                  </div>
               </div>
@@ -232,7 +232,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
               w-full h-full p-6 md:p-8 text-lg md:text-xl resize-none outline-none bg-transparent leading-relaxed
               ${theme === 'dark' ? 'text-white placeholder-stone-500' : 'text-stone-800 placeholder-stone-400'}
             `}
-            placeholder="Paste the message here or click the mic to read it out..."
+            placeholder={t.inputPlaceholder}
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
@@ -270,14 +270,14 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
             onClick={resetSelection}
             className={`px-8 py-4 rounded-2xl font-bold text-lg transition-colors ${theme === 'dark' ? 'bg-[#2C2C2C] text-stone-300 hover:bg-[#383838]' : 'bg-stone-100 text-stone-600 hover:bg-stone-200'}`}
           >
-            Back
+            {t.backBtn}
           </button>
           <button
             onClick={handleSubmit}
             disabled={(!text.trim() && !recordedAudio)}
             className="flex-grow py-4 rounded-2xl bg-[#6366F1] hover:bg-[#5558DD] text-white font-bold text-lg shadow-xl shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.01]"
           >
-            Analyze {recordedAudio ? 'Audio & Text' : 'Text'}
+            {recordedAudio ? t.analyzeAudioText : t.analyzeText}
           </button>
         </div>
       </div>
@@ -301,7 +301,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
           onClick={handleSubmit}
           className="w-full py-5 rounded-2xl bg-[#6366F1] hover:bg-[#5558DD] text-white font-bold text-xl shadow-xl transition-all"
         >
-          Analyze Screenshot
+          {t.analyzeScreenshot}
         </button>
       </div>
     );
@@ -324,13 +324,13 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, t, 
             onClick={resetSelection}
             className={`px-8 py-5 rounded-2xl font-bold text-lg transition-colors ${theme === 'dark' ? 'bg-[#2C2C2C] text-stone-300 hover:bg-[#383838]' : 'bg-stone-100 text-stone-600 hover:bg-stone-200'}`}
           >
-            Back
+            {t.backBtn}
           </button>
           <button
             onClick={handleSubmit}
             className="flex-grow py-5 rounded-2xl bg-[#6366F1] hover:bg-[#5558DD] text-white font-bold text-xl shadow-xl transition-all"
           >
-            Analyze Audio
+            {t.analyzeAudio}
           </button>
         </div>
       </div>
